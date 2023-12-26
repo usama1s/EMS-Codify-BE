@@ -3,7 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv');
-// const index = require('./routes/index');
+const db = require("./db.service.js/db.conn");
+const index = require('./routes/index');
 dotenv.config();
 
 
@@ -17,8 +18,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//CREATE DB IF NOT CREATED
+db.createDatabase();
+
 // ROUTE
-// app.use('/api', index);
+app.use('/api', index);
 
 
 const port = process.env.PORT || 5000;
