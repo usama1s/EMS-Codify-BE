@@ -1,8 +1,7 @@
 const mysql = require("mysql2/promise");
 const sql = require("./queries.service");
 
-// Database creation and table creation module
-
+// DATABASE CREATION ALONG WITH ALL THE TABLES
 async function createDatabase() {
     try {
         const connection = await mysql.createConnection({
@@ -11,20 +10,28 @@ async function createDatabase() {
             password: "",
         });
 
-        // Create the database if it does not exist
+        // CREATE THE DATABASE IF IT DOESN'T EXIST
         await connection.query(sql.CREATE_DATABASE);
         console.log("Database created or already exists");
 
         // Switch to the newly created or existing database
         await connection.query("USE ems");
 
-        // Create the table if it does not exist
-        await connection.query(sql.CREATE_TABLE_USERS);
-        console.log("Tables created or already exist");
+        // Array of table creation queries
+        const tableCreationQueries = [
+            sql.CREATE_TABLE_USERS,
+            sql.CREATE_TABLE_ATTENDANCE,
+        ];
+
+        // Iterate over the array and create each table
+        for (const tableQuery of tableCreationQueries) {
+            await connection.query(tableQuery);
+        }
+        console.log("All Tables created or already exists");
 
         await connection.end();
     } catch (error) {
-        console.error("Error creating database or table:", error.message);
+        console.error("Error creating database or tables:", error.message);
     }
 }
 
@@ -36,5 +43,4 @@ const pool = mysql.createPool({
     database: "ems",
 });
 
-// Export both modules
 module.exports = { createDatabase, pool };
