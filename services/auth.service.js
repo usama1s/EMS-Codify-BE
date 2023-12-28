@@ -38,7 +38,6 @@ module.exports = {
     },
 
     //get user by id
-
     async getUserById(userId) {
         try {
             const [user] = await pool.query(sql.GET_USER_BY_ID, [userId]);
@@ -100,7 +99,6 @@ module.exports = {
     },
 
     //Edit user by id
-
     async editUserById(userId, updatedUserData) {
         try {
             const { role, admin_type } = updatedUserData;

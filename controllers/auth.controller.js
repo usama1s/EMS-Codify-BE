@@ -3,7 +3,6 @@ const convertBase64 = require('../utils/convert.base64');
 
 module.exports = {
 
-
    // REGISTER
    async registerUser(req, res) {
     try {
@@ -33,4 +32,5 @@ module.exports = {
       return res.status(401).json({ error: "Failed to sign in" });
     }
   },
+  
 };
