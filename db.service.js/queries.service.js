@@ -36,4 +36,9 @@ module.exports = {
     FROM users 
     WHERE email=? AND role=?`,
 
+    LOGIN_USER: `
+    SELECT * 
+    FROM users 
+    WHERE email=? AND password=?`,
+
 }
