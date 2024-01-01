@@ -7,8 +7,8 @@ module.exports = {
    async registerUser(req, res) {
     try {
       const userDetail = req.body;
-      const profileFilePath = await convertBase64.base64ToJpg(userDetail.profile_picture);
-      const registrationResult = await authService.register(userDetail,profileFilePath);
+      // const profileFilePath = await convertBase64.base64ToJpg(userDetail.profile_picture);
+      const registrationResult = await authService.register(userDetail);
       return res.status(200).json({ message: registrationResult.message });
     } catch (error) {
       console.error("Error creating user:", error);
@@ -19,8 +19,8 @@ module.exports = {
   // SIGN IN
   async signIn(req, res) {
     try {
-      const { email, password, role } = req.body;
-      const user = await authService.signIn(email, password, role);
+      const { email, password} = req.body;
+      const user = await authService.signIn(email, password);
 
       if (user) {
         return res.status(200).json(user);
