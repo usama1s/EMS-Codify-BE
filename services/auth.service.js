@@ -5,31 +5,25 @@ const sql = require("../db.service.js/queries.service");
 module.exports = {
 
     // TO RESGISTER USERS
-    async register(userDetail, profileFilePath) {
+    async register(userDetail) {
         try {
-            const { email, password, role, designation, first_name, last_name, date_of_joining } = userDetail;
+            const { email, password, user_type, roles, designation, first_name, last_name, date_of_joining } = userDetail;
 
             const [isUserRegistered] = await pool.query(sql.CHECK_USER_REGISTERED, [
                 email,
-                role,
+                user_type,
             ]);
             if (!isUserRegistered.length) {
-                await pool.query(sql.INSERT_INTO_USERS, [
-                    profileFilePath,
-                    first_name,
-                    last_name,
-                    email,
-                    password,
-                    role,
-                    designation,
-                    date_of_joining
-                ]);
+                const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, designation, date_of_joining, user_type]);
+                const userId = registerUser.insertId
+                for (const role of roles) {
+                    await pool.query(sql.INSERT_INTO_MANAGER, [userId, role]);
+                }
                 return { message: "User Created Successfully" }
             } else {
                 return { message: "User Not Created " }
             }
         }
-
 
         catch (error) {
             console.error("Error creating user:", error);
@@ -152,12 +146,13 @@ module.exports = {
     },
 
     // SIGN IN
-    async signIn(email, password) {
+    async signIn(email, password, user_type) {
         try {
 
             const [results] = await pool.query(sql.LOGIN_USER, [
                 email,
-                password
+                password,
+                user_type
             ]);
 
             return results[0]

@@ -14,6 +14,13 @@ module.exports = {
         date_of_joining DATE
     );`,
 
+    CREATE_TABLE_MANAGER: `CREATE TABLE IF NOT EXISTS manager (
+        manager_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        role VARCHAR(15),
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    );`,
+
     CREATE_TABLE_ATTENDANCE: `CREATE TABLE IF NOT EXISTS attendance (
         attendance_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -24,21 +31,25 @@ module.exports = {
     );`,
 
     INSERT_INTO_USERS: `INSERT INTO users
-    (profile_picture, first_name, last_name, email, password, role, designation, date_of_joining)
-     VALUES (?,?,?,?,?,?,?,?)`,
+    (first_name, last_name, email, password, designation, date_of_joining, user_type)
+     VALUES (?,?,?,?,?,?,?)`,
+     
+     INSERT_INTO_MANAGER: `INSERT INTO manager
+    (user_id,role)
+     VALUES (?,?)`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
     (user_id, attendance_picture, location, attendance_date_time)
      VALUES (?,?,?,?)`,
 
     CHECK_USER_REGISTERED: `
-    SELECT email, role 
+    SELECT email, user_type 
     FROM users 
-    WHERE email=? AND role=?`,
+    WHERE email=? AND user_type=?`,
 
     LOGIN_USER: `
     SELECT * 
     FROM users 
-    WHERE email=? AND password=?`,
+    WHERE email=? AND password=? AND user_type=?`,
 
 }

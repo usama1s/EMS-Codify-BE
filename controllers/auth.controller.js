@@ -3,8 +3,8 @@ const convertBase64 = require('../utils/convert.base64');
 
 module.exports = {
 
-   // REGISTER
-   async registerUser(req, res) {
+  // REGISTER
+  async registerUser(req, res) {
     try {
       const userDetail = req.body;
       // const profileFilePath = await convertBase64.base64ToJpg(userDetail.profile_picture);
@@ -19,8 +19,8 @@ module.exports = {
   // SIGN IN
   async signIn(req, res) {
     try {
-      const { email, password} = req.body;
-      const user = await authService.signIn(email, password);
+      const { email, password, user_type } = req.body;
+      const user = await authService.signIn(email, password, user_type);
 
       if (user) {
         return res.status(200).json(user);
@@ -32,5 +32,5 @@ module.exports = {
       return res.status(401).json({ error: "Failed to sign in" });
     }
   },
-  
+
 };
