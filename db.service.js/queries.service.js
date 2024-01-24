@@ -9,7 +9,7 @@ module.exports = {
         last_name VARCHAR(50),
         email VARCHAR(100),
         password VARCHAR(255),
-        role VARCHAR(10),
+        user_type VARCHAR(10),
         designation VARCHAR(20),
         date_of_joining DATE
     );`,
@@ -31,7 +31,7 @@ module.exports = {
     );`,
 
     INSERT_INTO_USERS: `INSERT INTO users
-    (first_name, last_name, email, password, designation, date_of_joining, user_type)
+    (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,
      
      INSERT_INTO_MANAGER: `INSERT INTO manager
@@ -51,5 +51,18 @@ module.exports = {
     SELECT * 
     FROM users 
     WHERE email=? AND password=? AND user_type=?`,
+
+    LOGIN_MANAGER: `
+    select
+	*
+from
+	users
+inner join manager on
+	manager.user_id = users.user_id
+where
+	users.email = ?
+	and users.password  = ?
+	and users.user_type =?
+    `,
 
 }
