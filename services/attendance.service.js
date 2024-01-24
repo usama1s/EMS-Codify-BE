@@ -5,10 +5,11 @@ const sql = require("../db.service.js/queries.service");
 module.exports = {
 
     // INSERT ATTENDENCE
-    async insertAttendance(userDetail, attendanceFilePath) {
+    async insertAttendance(attendenceDetail, attendanceFilePath) {
         try {
-            const { user_id, location, attendance_date_time } = userDetail;
-            await pool.query(sql.INSERT_INTO_ATTENDANCE, [user_id, attendanceFilePath, location, attendance_date_time]);
+            const { user_id, location, attendance_date_time } = attendenceDetail;
+            let concatLocation = `${location.latitude},${location.longitude}`;
+            await pool.query(sql.INSERT_INTO_ATTENDANCE, [user_id, attendanceFilePath, concatLocation, attendance_date_time]);
             return { message: "Attendence added successfully" }
         }
         catch (error) {
