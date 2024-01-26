@@ -33,14 +33,14 @@ module.exports = {
     INSERT_INTO_USERS: `INSERT INTO users
     (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,
-     
-     INSERT_INTO_MANAGER: `INSERT INTO manager
+
+    INSERT_INTO_MANAGER: `INSERT INTO manager
     (user_id,role)
      VALUES (?,?)`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
-    (user_id, attendance_picture, location, attendance_date_time)
-     VALUES (?,?,?,?)`,
+    (user_id, attendance_picture, location)
+     VALUES (?,?,?)`,
 
     CHECK_USER_REGISTERED: `
     SELECT email, user_type 
@@ -55,14 +55,44 @@ module.exports = {
     LOGIN_MANAGER: `
     select
 	*
-from
+    from
 	users
-inner join manager on
+    inner join manager on
 	manager.user_id = users.user_id
-where
+    where
 	users.email = ?
 	and users.password  = ?
 	and users.user_type =?
     `,
 
+    CHECK_MOST_RECENT_ATTENDANCE_TIME: `
+    select
+	DATE_FORMAT(attendance.attendance_date_time, '%H:%i:%s') as attendance_time
+    from
+	attendance
+    inner join
+    users on
+	attendance.user_id = users.user_id
+    where
+	users.user_id = ?
+    order by
+	attendance.attendance_date_time desc
+    limit 1;
+    `,
+
+    GET_ALL_MANAGER_ATTENDANCE: `
+    SELECT
+    attendance.attendance_picture,
+    CONCAT(users.first_name, ' ', users.last_name) AS Fullname,
+    users.email,
+    users.designation,
+    attendance.attendance_date_time
+    FROM
+    attendance
+    INNER JOIN
+    users ON attendance.user_id = users.user_id
+    WHERE
+    users.user_type = 2;
+;
+    `,
 }

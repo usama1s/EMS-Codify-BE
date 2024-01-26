@@ -5,6 +5,7 @@ const router = express.Router();
 const authRoute = require('./auth.route');
 const attendenceRoute = require('./attendance.route');
 const managerRoute = require('./attendance.route');
+const adminRoute = require('./admin.route');
 
 
 
@@ -12,6 +13,7 @@ const managerRoute = require('./attendance.route');
 router.use('/auth', authRoute);
 router.use('/attendence', attendenceRoute);
 router.use('/manager', managerRoute);
+router.use('/admin', adminRoute);
 
 
 

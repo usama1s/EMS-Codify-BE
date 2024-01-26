@@ -1,5 +1,4 @@
 const authService = require("../services/auth.service");
-const convertBase64 = require('../utils/convert.base64');
 
 module.exports = {
 

@@ -15,7 +15,7 @@ module.exports = {
             ]);
             if (!isUserRegistered.length) {
                 const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, user_type, designation, date_of_joining]);
-                if (user_type = 2) {
+                if (user_type === 2) {
                     const userId = registerUser.insertId
                     for (const role of roles) {
                         await pool.query(sql.INSERT_INTO_MANAGER, [userId, role]);
@@ -158,6 +158,7 @@ module.exports = {
                 ]);
                 const roles = results.map(result => result.role);
                 return {
+                    user_id: results[0].user_id || "",
                     first_name: results[0].first_name || "",
                     last_name: results[0].last_name || "",
                     email: results[0].email || "",
@@ -167,7 +168,7 @@ module.exports = {
                     designation: results[0].designation || "",
                     date_of_joining: results[0].date_of_joining || ""
                 };
-            } else if (user_type === 1 && user_type === 3) {
+            } else if (user_type === 1 || user_type === 3) {
                 const [results] = await pool.query(sql.LOGIN_USER, [
                     email,
                     password,
