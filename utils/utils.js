@@ -58,5 +58,61 @@ module.exports = {
     extractFilenameFromURL: (url) => {
         const parts = url.split('\\');
         return parts[parts.length - 1];
-    }
+    },
+
+    // GET TIME IN ET TIME ZONE
+    getCurrentDateTimeInET: () => {
+        const currentDate = new Date();
+        // Convert to UTC
+        const utcDate = new Date(currentDate.toUTCString());
+        const etOffset = -4 * 60; // UTC-4 for Eastern Time (ET)
+        const etDate = new Date(utcDate.getTime() + etOffset * 60000);
+        const hours = etDate.getUTCHours();
+
+        return etDate;
+    },
+
+    getCurrentDateTimeWithTimeZone: () => {
+        const currentDate = new Date();
+        // Extract time zone offset in minutes
+        const fullDate = currentDate.toLocaleString('en-US', { timeZoneName: 'short' });
+        function getTimeZone(date) {
+            const dateString = date;
+
+            // Regular expression to match the time zone abbreviation
+            const timeZoneRegex = /\b([A-Z]{3,4})\b/;
+
+            // Extract time zone
+            const timeZoneMatch = dateString.match(timeZoneRegex);
+            const timeZone = timeZoneMatch ? timeZoneMatch[1] : null;
+            return timeZone
+        }
+        const timeZone = getTimeZone(fullDate)
+
+        return { currentDate, timeZone }
+
+    },
+
+
+    // CONVERT TIME TO EST
+    convertToEST: (date_time, timezone) => {
+        const etOffset = -4 * 60; // Offset for Eastern Time (ET) in minutes
+    
+        // Check if the timezone is already Eastern Time (ET)
+        if (timezone === 'EST' || timezone === 'EDT') {
+            return date_time;
+        }
+    
+        // Convert to UTC time
+        const utcTime = new Date(date_time.getTime() + date_time.getTimezoneOffset() * 60000);
+    
+        // Convert to Eastern Time (ET)
+        const estTime = new Date(utcTime.getTime() + etOffset * 60000);
+    
+        return estTime;
+    },
+    
+
+
+
 }

@@ -25,8 +25,9 @@ module.exports = {
         attendance_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         attendance_picture VARCHAR(150),
-        location VARCHAR(50), 
-        attendance_date_time TIMESTAMP,
+        location VARCHAR(50),
+        attendance_date_time DATETIME,
+        time_zone VARCHAR(50),
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
@@ -39,8 +40,8 @@ module.exports = {
      VALUES (?,?)`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
-    (user_id, attendance_picture, location)
-     VALUES (?,?,?)`,
+    (user_id, attendance_picture, location, attendance_date_time, time_zone)
+     VALUES (?,?,?,?,?)`,
 
     CHECK_USER_REGISTERED: `
     SELECT email, user_type 
@@ -67,7 +68,8 @@ module.exports = {
 
     CHECK_MOST_RECENT_ATTENDANCE_TIME: `
     select
-	DATE_FORMAT(attendance.attendance_date_time, '%H:%i:%s') as attendance_time
+    attendance.time_zone,
+	attendance.attendance_date_time
     from
 	attendance
     inner join

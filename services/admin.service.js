@@ -1,6 +1,6 @@
 const { pool } = require("../db.service.js/db.conn");
 const sql = require("../db.service.js/queries.service");
-const convertBase64 = require('../utils/convert.base64');
+const convertBase64 = require('../utils/utils');
 
 
 

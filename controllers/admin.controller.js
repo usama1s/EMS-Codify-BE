@@ -1,5 +1,4 @@
 const adminService = require("../services/admin.service");
-const convertBase64 = require('../utils/convert.base64');
 
 
 module.exports = {
