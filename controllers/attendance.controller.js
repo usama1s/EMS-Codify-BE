@@ -8,8 +8,7 @@ module.exports = {
     async insertAttendance(req, res) {
         try {
             const attendenceDetail = req.body;
-            const attendanceFilePath = await utils.base64ToJpg(attendenceDetail.attendance_picture);
-            const attendanceAdded = await attendanceService.insertAttendance(attendenceDetail, attendanceFilePath);
+            const attendanceAdded = await attendanceService.insertAttendance(attendenceDetail);
             return res.status(200).json({ message: attendanceAdded.message });
         } catch (error) {
             console.error("Error creating user:", error);
@@ -17,11 +16,11 @@ module.exports = {
         }
     },
 
+    // CLOCK OUT
     async clockOut(req, res) {
         try {
             const attendenceDetail = req.body;
-            const attendanceFilePath = await utils.base64ToJpg(attendenceDetail.attendance_picture);
-            const attendanceAdded = await attendanceService.clockOut(attendenceDetail, attendanceFilePath);
+            const attendanceAdded = await attendanceService.clockOut(attendenceDetail);
             return res.status(200).json({ message: attendanceAdded.message });
         } catch (error) {
             console.error("Error creating user:", error);
@@ -29,10 +28,11 @@ module.exports = {
         }
     },
 
+    // GET AT WHAT TIME THE USER CLOCKED-IN
     async getClockInTime(req, res) {
         try {
-            const { user_id } = req.query; // Use req.query to get query parameters
-            const recent_attendance_time = await attendanceService.getClockInTime(user_id);
+            const { user_id, clock_type } = req.query; // Use req.query to get query parameters
+            const recent_attendance_time = await attendanceService.getClockInTime(user_id, clock_type);
             return res.status(200).json({ recent_attendance_time });
         } catch (error) {
             console.error("Error getting clock-in time:", error);

@@ -9,7 +9,7 @@ module.exports = {
         last_name VARCHAR(50),
         email VARCHAR(100),
         password VARCHAR(255),
-        user_type VARCHAR(10),
+        user_type INT,
         designation VARCHAR(20),
         date_of_joining DATE
     );`,
@@ -28,6 +28,7 @@ module.exports = {
         location VARCHAR(50),
         attendance_date_time DATETIME,
         time_zone VARCHAR(50),
+        clock_type VARCHAR(3),
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
@@ -40,8 +41,8 @@ module.exports = {
      VALUES (?,?)`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
-    (user_id, attendance_picture, location, attendance_date_time, time_zone)
-     VALUES (?,?,?,?,?)`,
+    (user_id, attendance_picture, location, attendance_date_time, time_zone, clock_type)
+     VALUES (?,?,?,?,?,?)`,
 
     CHECK_USER_REGISTERED: `
     SELECT email, user_type 
@@ -76,7 +77,7 @@ module.exports = {
     users on
 	attendance.user_id = users.user_id
     where
-	users.user_id = ?
+	users.user_id = ? and attendance.clock_type = ? 
     order by
 	attendance.attendance_date_time desc
     limit 1;
@@ -84,11 +85,7 @@ module.exports = {
 
     GET_ALL_MANAGER_ATTENDANCE: `
     SELECT
-    attendance.attendance_picture,
-    CONCAT(users.first_name, ' ', users.last_name) AS Fullname,
-    users.email,
-    users.designation,
-    attendance.attendance_date_time
+    *
     FROM
     attendance
     INNER JOIN
