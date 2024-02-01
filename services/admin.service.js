@@ -49,7 +49,7 @@ module.exports = {
                         groupedAttendances[userId] = {
                             attendance_id: attendance.attendance_id,
                             user_id: userId,
-                            attendance_picture: attendance.attendance_picture,
+                            // attendance_picture: attendance.attendance_picture,
                             attendance: [],
                             time_zone: attendance.time_zone,
                             first_name: attendance.first_name,
@@ -72,6 +72,7 @@ module.exports = {
                         time: time,
                         location: attendance.location,
                         clock_type: clockType,
+                        attendance_picture: attendance.attendance_picture,
                     };
     
                     // Push the attendance record to the array for the corresponding user_id
