@@ -105,24 +105,44 @@ module.exports = {
 
     // [
     //     {
-    //         "attendance_id": 37,
+    //         "attendance_id": 41,
     //         "user_id": 2,
-    //         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/FP4bNW7dxa3SdqkLEj4I9jXkbxb8Nr7QuZLFzbldhcbjbPIEgiDwfYj/KvTzGeSlzy1kgJMfjUjOYrDa4wzuFzTAcacHoWRKmz7it10vqEuNKpfpZyPqT02uqYbX614Z4iwzrT2DshxuQopKT8LIorhFJtM/lG1AAqbaUmOnejWt/CnMeGt4u0uUquMa68pdtcgcKRMgH2IqpWj3l6juXlOQCwghPvBiK7WE45Y90XpninI4ebh5HizRqSLNcs29w55izJisqKhbboKlLgzEAVlLbQvajq7182hKvs1skSOD80PXnXXFeU44sE9p9qysrk+VyMnIblkds986fxMHDgoYIqK/VlZWTD7aoxsk3RJtX3blZhRhImiFsy466kLUeeJntWVlJdSYE7iH7DG7trinCU/7M8Vb8Q0EpCGzAAEVlZSZG6LsTd0TbzGFR3trAPXpSLZy9s3CkuEg89ayspcfiy5/cqZOyePxeqcS7h82yHmHxt5HKTHBHsa8keKXh7feHuskWzz6Hre6YU5bODqUBXAI6giaysrqOh55uXa3o879d8PDLirkdv3p+QfYPPrtkqCUq+elZWVldcoRo8lb2f//Z",
     //         "attendance": [
     //             {
-    //                 "date": "2024-01-31",
+    //                 "date": "2024-02-01",
     //                 "ClockIn": [
     //                     {
-    //                         "time": "20:14:14",
-    //                         "location": "33.6277313,73.0759331",
-    //                         "clock_type": "CI"
+    //                         "time": "19:43:44",
+    //                         "location": "33.6494595,73.075933",
+    //                         "clock_type": "CI",
+    //                          "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
     //                     }
     //                 ],
     //                 "ClockOut": [
     //                     {
-    //                         "time": "20:20:45",
-    //                         "location": "33.6277313,73.0759331",
-    //                         "clock_type": "CO"
+    //                         "time": "19:45:14",
+    //                         "location": "33.6494595,73.075933",
+    //                         "clock_type": "CO",
+    //                          "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
+    //                     }
+    //                 ]
+    //             },
+    //             {
+    //                 "date": "2024-02-02",
+    //                 "ClockIn": [
+    //                     {
+    //                         "time": "20:29:22",
+    //                         "location": "33.6494595,73.075933",
+    //                         "clock_type": "CI",
+    //                          "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
+    //                     }
+    //                 ],
+    //                 "ClockOut": [
+    //                     {
+    //                         "time": "20:29:48",
+    //                         "location": "33.6494595,73.075933",
+    //                         "clock_type": "CO",
+    //                         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
     //                     }
     //                 ]
     //             }
