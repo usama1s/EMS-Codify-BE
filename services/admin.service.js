@@ -6,50 +6,64 @@ const convertBase64 = require('../utils/utils');
 
 module.exports = {
 
-    // INSERT ATTENDENCE
-    // async getAllManagerAttendance() {
-    //     try {
-    //         const modifiedAttendance = []
-    //         const [attendances] = await pool.query(sql.GET_ALL_MANAGER_ATTENDANCE);
-    //         if (attendances) {
-    //             for (const attendance of attendances) {
-    //                 const filename = convertBase64.extractFilenameFromURL(attendance.attendance_picture);
-    //                 const base64 = convertBase64.convertFileIntoBase64(filename)
-    //                 attendance.attendance_picture = base64
-    //                 modifiedAttendance.push(attendance);
-    //             }
-    //             return modifiedAttendance
-    //         }
+    // GET ALL MANAGERS REGISTERED  
+    async getAllManagers() {
+        try {
+            const managerMap = new Map();
+            const [managers] = await pool.query(sql.GET_ALL_MANAGERS, [2]);
 
-    //     }
-    //     catch (error) {
-    //         console.error("Error creating user:", error);
-    //         throw error;
-    //     }
-    // },
+            managers.forEach(manager => {
+                const existingManager = managerMap.get(manager.user_id);
+
+                if (existingManager) {
+                    existingManager.roles.push(manager.role);
+                } else {
+                    managerMap.set(manager.user_id, {
+                        "user_id": manager.user_id,
+                        "first_name": manager.first_name,
+                        "last_name": manager.last_name,
+                        "email": manager.email,
+                        "password": manager.password,
+                        "user_type": manager.user_type,
+                        "roles": [manager.role],
+                        "designation": manager.designation,
+                        "date_of_joining": ""
+                    });
+                }
+            });
+
+            const modifiedManagers = Array.from(managerMap.values());
+            return modifiedManagers;
+
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
+    // GET ALL MANAGERS ATTENDANCE
     async getAllManagerAttendance() {
         try {
             const modifiedAttendance = [];
             const [attendances] = await pool.query(sql.GET_ALL_MANAGER_ATTENDANCE);
-    
+
             if (attendances) {
                 // Create a dictionary to store attendance records based on user_id
                 const groupedAttendances = {};
-    
+
                 for (const attendance of attendances) {
                     const filename = convertBase64.extractFilenameFromURL(attendance.attendance_picture);
                     const base64 = convertBase64.convertFileIntoBase64(filename);
                     attendance.attendance_picture = base64;
-    
+
                     const userId = attendance.user_id;
-    
+
                     // Check if the user_id key exists in the dictionary
                     if (!(userId in groupedAttendances)) {
                         // If not, initialize an object for that user_id
                         groupedAttendances[userId] = {
                             attendance_id: attendance.attendance_id,
                             user_id: userId,
-                            // attendance_picture: attendance.attendance_picture,
                             attendance: [],
                             time_zone: attendance.time_zone,
                             first_name: attendance.first_name,
@@ -62,11 +76,11 @@ module.exports = {
                             profile_picture: attendance.profile_picture,
                         };
                     }
-    
+
                     const attendanceDateTime = new Date(attendance.attendance_date_time);
                     const time = attendanceDateTime.toISOString().slice(11, 19); // Extracts hours, minutes, and seconds
                     const date = attendanceDateTime.toISOString().split('T')[0];
-    
+
                     const clockType = attendance.clock_type;
                     const clockRecord = {
                         time: time,
@@ -74,7 +88,7 @@ module.exports = {
                         clock_type: clockType,
                         attendance_picture: attendance.attendance_picture,
                     };
-    
+
                     // Push the attendance record to the array for the corresponding user_id
                     if (clockType === 'CI') {
                         groupedAttendances[userId].attendance.push({
@@ -90,10 +104,10 @@ module.exports = {
                         }
                     }
                 }
-    
+
                 // Convert the dictionary values to an array
                 modifiedAttendance.push(...Object.values(groupedAttendances));
-    
+
                 return modifiedAttendance;
             }
         } catch (error) {
@@ -101,7 +115,8 @@ module.exports = {
             throw error;
         }
     }
-    
+
+
 
     // [
     //     {
@@ -156,7 +171,7 @@ module.exports = {
     //         "designation": "Manager",
     //         "date_of_joining": null,
     //         "profile_picture": null
-    //     }
+    //     },
     // ]
 
 }

@@ -92,6 +92,27 @@ module.exports = {
     users ON attendance.user_id = users.user_id
     WHERE
     users.user_type = 2;
-;
+    `,
+
+    GET_ATTENDANCE_BY_USER_ID: `
+   SELECT
+    *
+    FROM
+    attendance
+    INNER JOIN
+    users ON attendance.user_id = users.user_id
+    WHERE
+    users.user_id=?
+    `,
+
+    GET_ALL_MANAGERS: `
+    select
+	*
+    from
+	users
+    inner join manager on
+	manager.user_id = users.user_id
+    where
+	users.user_type =?;
     `,
 }
