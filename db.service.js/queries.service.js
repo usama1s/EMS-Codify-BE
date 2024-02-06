@@ -32,6 +32,35 @@ module.exports = {
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
+    CREATE_TABLE_EMPLOYEE: `CREATE TABLE IF NOT EXISTS employee (
+        employee_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        reporting_manager_from_users INT,
+        contract_start_date Date,
+        contract_end_date Date,
+        pay INT,
+        signed_contract_pdf VARCHAR(150),
+        contract_status INT,
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (reporting_manager_from_users) REFERENCES users(user_id)
+    );`,
+
+    CREATE_TABLE_EMPLOYEE_PROGESS: `CREATE TABLE IF NOT EXISTS employee_progress (
+        employee_progress_id INT AUTO_INCREMENT PRIMARY KEY,
+        employee_id INT,
+        progress_date DATE,
+        FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+    );`,
+
+    CREATE_TABLE_EMPLOYEE_PROGESS_DETAIL: `CREATE TABLE IF NOT EXISTS employee_progress_detail (
+        employee_progress_detail_id INT AUTO_INCREMENT PRIMARY KEY,
+        employee_progress_id INT,
+        hours VARCHAR(15),
+        title VARCHAR(50),
+        description VARCHAR(250),
+        FOREIGN KEY (employee_progress_id) REFERENCES employee_progress(employee_progress_id)
+    );`,
+
     INSERT_INTO_USERS: `INSERT INTO users
     (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,
@@ -39,6 +68,10 @@ module.exports = {
     INSERT_INTO_MANAGER: `INSERT INTO manager
     (user_id,role)
      VALUES (?,?)`,
+
+     INSERT_INTO_EMPLOYEE: `INSERT INTO employee
+     (user_id)
+     VALUES(?);`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
     (user_id, attendance_picture, location, attendance_date_time, time_zone, clock_type)
@@ -94,6 +127,17 @@ module.exports = {
     users.user_type = 2;
     `,
 
+    GET_ALL_EMPLOYEE_ATTENDANCE: `
+    SELECT
+    *
+    FROM
+    attendance
+    INNER JOIN
+    users ON attendance.user_id = users.user_id
+    WHERE
+    users.user_type = 3;
+    `,
+
     GET_ATTENDANCE_BY_USER_ID: `
    SELECT
     *
@@ -112,6 +156,17 @@ module.exports = {
 	users
     inner join manager on
 	manager.user_id = users.user_id
+    where
+	users.user_type =?;
+    `,
+
+    GET_ALL_EMPLOYEE: `
+    select
+	*
+    from
+	users
+    inner join employee on
+	employee.user_id = users.user_id
     where
 	users.user_type =?;
     `,

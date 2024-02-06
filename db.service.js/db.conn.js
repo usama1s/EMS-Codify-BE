@@ -21,7 +21,10 @@ async function createDatabase() {
         const tableCreationQueries = [
             sql.CREATE_TABLE_USERS,
             sql.CREATE_TABLE_ATTENDANCE,
-            sql.CREATE_TABLE_MANAGER
+            sql.CREATE_TABLE_MANAGER,
+            sql.CREATE_TABLE_EMPLOYEE,
+            sql.CREATE_TABLE_EMPLOYEE_PROGESS,
+            sql.CREATE_TABLE_EMPLOYEE_PROGESS_DETAIL
         ];
 
         // Iterate over the array and create each table
