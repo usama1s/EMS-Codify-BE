@@ -5,16 +5,16 @@ const managerService = require("../services/manager.service");
 module.exports = {
 
     // GET ALL MANAGERS ATTENDANCE
-    async getAttendanceByUserId(req, res) {
-        try {
-            const { userId } = req.query;
-            const managerAttendance = await managerService.getAttendanceByUserId(userId);
-            return res.status(200).json(managerAttendance);
-        } catch (error) {
-            console.error("Error creating user:", error);
-            return res.status(401).json({ error: "Failed add attencdence" });
-        }
-    },
+    // async getAttendanceByUserId(req, res) {
+    //     try {
+    //         const { userId } = req.query;
+    //         const managerAttendance = await managerService.getAttendanceByUserId(userId);
+    //         return res.status(200).json(managerAttendance);
+    //     } catch (error) {
+    //         console.error("Error creating user:", error);
+    //         return res.status(401).json({ error: "Failed add attencdence" });
+    //     }
+    // },
 
     // GET ALL EMPLOYEE
     async getAllEmployee(req, res) {

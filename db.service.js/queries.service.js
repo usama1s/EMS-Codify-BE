@@ -69,7 +69,7 @@ module.exports = {
     (user_id,role)
      VALUES (?,?)`,
 
-     INSERT_INTO_EMPLOYEE: `INSERT INTO employee
+    INSERT_INTO_EMPLOYEE: `INSERT INTO employee
      (user_id)
      VALUES(?);`,
 
@@ -169,5 +169,49 @@ module.exports = {
 	employee.user_id = users.user_id
     where
 	users.user_type =?;
+    `,
+
+    GET_CLOCKIN_STATUS_BY_USERID_AND_DATE: `
+    select
+    clock_type
+    from
+    attendance
+    where
+    user_id =?
+    and
+    DATE(attendance_date_time) =?
+    order by
+	attendance_date_time desc
+    limit 1;
+    `,
+
+    GET_EMPLOYEE_ID: `
+    select
+    employee_id 
+    from 
+    employee
+    where user_id=?
+    `,
+
+    INSERT_INTO_EMPLOYEE_PROGRESS: `INSERT INTO employee_progress
+    (employee_id, progress_date)
+    VALUES(?, ?);`,
+
+    INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS: `INSERT INTO employee_progress_detail
+    (employee_progress_id, start_time, title, description, end_time)
+    VALUES(?, ?, ?, ?, ?);`,
+
+    GET_CLOCKIN_TIME_BY_USERID_AND_DATE: `
+    select
+    attendance_date_time
+    from
+    attendance
+    where
+    user_id =?
+    and
+    DATE(attendance_date_time) =?
+    order by
+	attendance_date_time desc
+    limit 1;
     `,
 }
