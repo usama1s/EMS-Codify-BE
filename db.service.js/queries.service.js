@@ -138,6 +138,21 @@ module.exports = {
     users.user_type = 3;
     `,
 
+    GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS: `
+    SELECT
+    *
+    FROM
+    attendance
+    INNER JOIN
+    users ON attendance.user_id = users.user_id
+    inner join employee on employee.user_id =users.user_id 
+    inner join employee_progress on employee_progress.employee_id =employee.employee_id 
+    inner join employee_progress_detail on employee_progress_detail.employee_progress_id  =employee_progress.employee_progress_id  
+    WHERE
+    users.user_type = 3
+    
+    `,
+
     GET_ATTENDANCE_BY_USER_ID: `
    SELECT
     *
