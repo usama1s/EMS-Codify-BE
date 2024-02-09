@@ -49,9 +49,24 @@ module.exports = {
         try {
             const progressDetails = req.body;
             const userId = progressDetails[1]
-            const progressDetailArray = progressDetails[0]
+            const progressDetailObj = progressDetails[0]
             const date = progressDetails[2]
-            const progress = await sharedService.addDailyProgress(userId, progressDetailArray,date);
+            const progress = await sharedService.addDailyProgress(userId, progressDetailObj, date);
+            return res.status(200).json(progress);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+    // ADD DAILY PROGRESS OF EMPLOYEES
+    async checkProgress(req, res) {
+        try {
+            const progressDetails = req.query;
+            const userId = progressDetails[1]
+            const date = progressDetails[2]
+            const startTime = progressDetails[0]
+            const progress = await sharedService.checkProgress(userId, startTime, date);
             return res.status(200).json(progress);
         } catch (error) {
             console.error("Error creating user:", error);

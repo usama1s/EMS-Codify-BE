@@ -114,24 +114,45 @@ module.exports = {
     },
 
     // ADD DAILY PROGRESS
-    async addDailyProgress(userId, progressDetailArray, date) {
+    async addDailyProgress(userId, progressDetailObj, date) {
         try {
             const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
             const empId = employeeId[0].employee_id
             const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
             const employeeProgressId = employeeProgress.insertId
-            for (const progressDetail of progressDetailArray) {
-                const [employeeProgressDetails] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS,
-                    [
-                        employeeProgressId,
-                        progressDetail.startTime,
-                        progressDetail.title,
-                        progressDetail.description,
-                        progressDetail.endTime,
-                    ]
-                );
-            }
+            // for (const progressDetail of progressDetailArray) {
+            const [employeeProgressDetails] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS,
+                [
+                    employeeProgressId,
+                    progressDetailObj.startTime,
+                    progressDetailObj.title,
+                    progressDetailObj.description,
+                    progressDetailObj.endTime,
+                ]
+            );
+            // }
             return { message: "Progress Added Successfully" }
+        }
+        catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
+    // CHECK PROGRESS IF EXISTS
+    async checkProgress(userId, startTime, date) {
+        try {
+            const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
+            const empId = employeeId[0].employee_id
+            const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
+            const employeeProgressId = employeeProgress.insertId
+            const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [employeeProgressId, startTime, date]);
+            if (isEmployeeProgress > 0) {
+                return true
+            }
+            else {
+                return false
+            }
         }
         catch (error) {
             console.error("Error fetching manager attendance:", error);

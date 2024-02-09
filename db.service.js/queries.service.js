@@ -229,4 +229,14 @@ module.exports = {
 	attendance_date_time desc
     limit 1;
     `,
+
+    CHECK_PROGRESS: `
+    select
+	*
+from
+	employee_progress
+inner join 
+   employee_progress_detail on employee_progress.employee_progress_id =employee_progress_detail.employee_progress_id 
+   where 	employee_progress.employee_id =? and employee_progress_detail.start_time =? and employee_progress.progress_date =?
+    `,
 }
