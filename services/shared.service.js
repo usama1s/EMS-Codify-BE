@@ -116,10 +116,19 @@ module.exports = {
     // ADD DAILY PROGRESS
     async addDailyProgress(userId, progressDetailObj, date) {
         try {
+            let employeeProgressId
             const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
             const empId = employeeId[0].employee_id
-            const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
-            const employeeProgressId = employeeProgress.insertId
+
+
+            const [checkEmployeeProgressId] = await pool.query(sql.GET_EMPLOYEE_PROGRESS_ID, [empId, date]);
+            if (checkEmployeeProgressId.length == 0) {
+                const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
+                employeeProgressId = employeeProgress.insertId
+            }
+            else {
+                employeeProgressId = checkEmployeeProgressId[0].employee_progress_id
+            }
             // for (const progressDetail of progressDetailArray) {
             const [employeeProgressDetails] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS,
                 [
@@ -140,14 +149,14 @@ module.exports = {
     },
 
     // CHECK PROGRESS IF EXISTS
-    async checkProgress(userId, startTime, date) {
+    async checkProgress(userId, startTime, date, endTime) {
         try {
             const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
             const empId = employeeId[0].employee_id
-            const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
-            const employeeProgressId = employeeProgress.insertId
-            const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [employeeProgressId, startTime, date]);
-            if (isEmployeeProgress > 0) {
+            const [employeeProgress] = await pool.query(sql.GET_EMPLOYEE_PROGRESS_ID, [empId, date]);
+            const employeeProgressId = employeeProgress[0].employee_progress_id
+            const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [employeeProgressId, startTime, endTime, date]);
+            if (isEmployeeProgress.length > 0) {
                 return true
             }
             else {

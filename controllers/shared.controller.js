@@ -62,11 +62,8 @@ module.exports = {
     // ADD DAILY PROGRESS OF EMPLOYEES
     async checkProgress(req, res) {
         try {
-            const progressDetails = req.query;
-            const userId = progressDetails[1]
-            const date = progressDetails[2]
-            const startTime = progressDetails[0]
-            const progress = await sharedService.checkProgress(userId, startTime, date);
+            const { userId, date, startTime, endTime } = req.body;
+            const progress = await sharedService.checkProgress(userId, startTime, date, endTime);
             return res.status(200).json(progress);
         } catch (error) {
             console.error("Error creating user:", error);

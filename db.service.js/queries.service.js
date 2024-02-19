@@ -233,10 +233,29 @@ module.exports = {
     CHECK_PROGRESS: `
     select
 	*
-from
+    from
 	employee_progress
-inner join 
-   employee_progress_detail on employee_progress.employee_progress_id =employee_progress_detail.employee_progress_id 
-   where 	employee_progress.employee_id =? and employee_progress_detail.start_time =? and employee_progress.progress_date =?
+    inner join 
+    employee_progress_detail on employee_progress.employee_progress_id =employee_progress_detail.employee_progress_id 
+    where 	
+    employee_progress.employee_progress_id =?
+    and
+    employee_progress_detail.start_time =? 
+    and
+    employee_progress_detail.end_time =? 
+    and
+    employee_progress.progress_date =?
+    `,
+
+    GET_EMPLOYEE_PROGRESS_ID: `
+    select
+	*
+    from
+	employee_progress
+    inner join employee on
+	employee.employee_id = employee_progress.employee_id
+    where
+	employee_progress.employee_id = ?
+	and employee_progress.progress_date = ?
     `,
 }
