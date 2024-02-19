@@ -9,5 +9,6 @@ router.get('/get-clockin-status/:userId/:date', sharedController.getClockStatusB
 router.get('/get-clockin-time/:userId/:date', sharedController.getClockInTimeByUserIdAndDate);
 router.post('/add-daily-progress', sharedController.addDailyProgress);
 router.post('/check-progress', sharedController.checkProgress);
+// router.post('/fetch-data-by-month-year', sharedController.checkProgress);
 
 module.exports = router;
