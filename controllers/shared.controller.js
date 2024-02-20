@@ -71,5 +71,17 @@ module.exports = {
         }
     },
 
+    // GET DAILY PROGRESS OF EMPLOYEES
+    async getProgressDetail(req, res) {
+        try {
+            const { attendanceId, date } = req.query;
+            const progress = await sharedService.getProgressDetail(attendanceId, date);
+            return res.status(200).json(progress);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
 
 }

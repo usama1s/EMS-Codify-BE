@@ -116,15 +116,26 @@ module.exports = {
     limit 1;
     `,
 
+    // GET_ALL_MANAGER_ATTENDANCE: `
+    // SELECT
+    // *
+    // FROM
+    // attendance
+    // INNER JOIN
+    // users ON attendance.user_id = users.user_id
+    // WHERE
+    // users.user_type = 2;
+    // `,
+
     GET_ALL_MANAGER_ATTENDANCE: `
-    SELECT
-    *
-    FROM
-    attendance
-    INNER JOIN
-    users ON attendance.user_id = users.user_id
-    WHERE
-    users.user_type = 2;
+    SELECT *
+    FROM attendance
+    INNER JOIN users ON attendance.user_id = users.user_id
+    WHERE 
+    users.user_type = 2 OR 
+    YEAR(attendance.attendance_date_time) = ? or
+    MONTH(attendance.attendance_date_time) = ? or
+    DAY(attendance.attendance_date_time) = ?;
     `,
 
     GET_ALL_EMPLOYEE_ATTENDANCE: `
@@ -138,23 +149,38 @@ module.exports = {
     users.user_type = 3;
     `,
 
+    // GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS: `
+    // SELECT
+    // *
+    // FROM
+    // attendance
+    // INNER JOIN
+    // users ON attendance.user_id = users.user_id
+    // inner join employee on employee.user_id =users.user_id 
+    // inner join employee_progress on employee_progress.employee_id =employee.employee_id 
+    // inner join employee_progress_detail on employee_progress_detail.employee_progress_id  =employee_progress.employee_progress_id  
+    // WHERE
+    // users.user_type = 3
+    // `,
+
     GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS: `
-    SELECT
-    *
-    FROM
-    attendance
-    INNER JOIN
-    users ON attendance.user_id = users.user_id
-    inner join employee on employee.user_id =users.user_id 
-    inner join employee_progress on employee_progress.employee_id =employee.employee_id 
-    inner join employee_progress_detail on employee_progress_detail.employee_progress_id  =employee_progress.employee_progress_id  
-    WHERE
-    users.user_type = 3
-    
+    select
+	*
+    from
+	attendance
+    inner join
+    users on
+	attendance.user_id = users.user_id
+    inner join employee on
+	employee.user_id = users.user_id
+    inner join employee_progress_detail on
+	employee_progress_detail.attendance_id = attendance.attendance_id
+    where
+	users.user_type = 3
     `,
 
     GET_ATTENDANCE_BY_USER_ID: `
-   SELECT
+    SELECT
     *
     FROM
     attendance
@@ -213,7 +239,7 @@ module.exports = {
     VALUES(?, ?);`,
 
     INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS: `INSERT INTO employee_progress_detail
-    (employee_progress_id, start_time, title, description, end_time)
+    ( start_time, title, description, end_time, attendance_id)
     VALUES(?, ?, ?, ?, ?);`,
 
     GET_CLOCKIN_TIME_BY_USERID_AND_DATE: `
@@ -234,28 +260,56 @@ module.exports = {
     select
 	*
     from
-	employee_progress
+	attendance
     inner join 
-    employee_progress_detail on employee_progress.employee_progress_id =employee_progress_detail.employee_progress_id 
+    employee_progress_detail on attendance.attendance_id =employee_progress_detail.attendance_id 
     where 	
-    employee_progress.employee_progress_id =?
+    attendance.attendance_id =?
     and
     employee_progress_detail.start_time =? 
     and
     employee_progress_detail.end_time =? 
     and
-    employee_progress.progress_date =?
+    DATE(attendance.attendance_date_time) =?
     `,
 
-    GET_EMPLOYEE_PROGRESS_ID: `
+    // GET_EMPLOYEE_PROGRESS_ID: `
+    // select
+	// *
+    // from
+	// attendance
+    // inner join employee on
+	// employee.employee_id = employee_progress.employee_id
+    // where
+	// employee_progress.employee_id = ?
+	// and employee_progress.progress_date = ?
+    // `,
+    GET_EMPLOYEE_ATTENDANCE_ID: `
     select
 	*
     from
-	employee_progress
-    inner join employee on
-	employee.employee_id = employee_progress.employee_id
+	attendance
     where
-	employee_progress.employee_id = ?
-	and employee_progress.progress_date = ?
+	user_id = ?
+    and
+    DATE(attendance_date_time) =?
+    `,
+
+    GET_EMPLOYEE_PROGRESS_DETAIL: `
+    SELECT
+    attendance.attendance_id,
+    attendance.attendance_date_time,
+    employee_progress_detail.start_time,
+    employee_progress_detail.end_time,
+    employee_progress_detail.title,
+    employee_progress_detail.description
+    FROM
+    attendance
+    inner join employee_progress_detail on
+	employee_progress_detail.attendance_id = attendance.attendance_id
+    WHERE
+    attendance.attendance_id =?
+    and
+    DATE(attendance.attendance_date_time) =?
     `,
 }
