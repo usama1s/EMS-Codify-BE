@@ -42,7 +42,8 @@ module.exports = {
     // GET ALL MANAGERS ATTENDANCE
     async getAllEmployeesAttendance(req, res) {
         try {
-            const attendance = await managerService.getAllEmployeesAttendance();
+            const { year, month } = req.query
+            const attendance = await managerService.getAllEmployeesAttendance(year,month);
             return res.status(200).json(attendance);
         } catch (error) {
             console.error("Error creating user:", error);

@@ -124,27 +124,26 @@ module.exports = {
     },
 
     // GET ALL EMPLOYEES ATTENDANCE   
-    async getAllEmployeesAttendance() {
+    async getAllEmployeesAttendance(year,month) {
         try {
             const modifiedAttendance = [];
-            const [attendances] = await pool.query(sql.GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS);
-    
+            const [attendances] = await pool.query(sql.GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS, [year, year, month, month]);
+
             if (attendances) {
                 // Create a dictionary to store attendance records based on user_id
                 const groupedAttendances = {};
-    
+
                 for (const attendance of attendances) {
                     const filename = convertBase64.extractFilenameFromURL(attendance.attendance_picture);
                     const base64 = convertBase64.convertFileIntoBase64(filename);
                     attendance.attendance_picture = base64;
-    
+
                     const userId = attendance.user_id;
-    
+
                     // Check if the user_id key exists in the dictionary
                     if (!(userId in groupedAttendances)) {
                         // If not, initialize an object for that user_id
                         groupedAttendances[userId] = {
-                            attendance_id: attendance.attendance_id,
                             user_id: userId,
                             attendance: [],
                             time_zone: attendance.time_zone,
@@ -158,11 +157,11 @@ module.exports = {
                             profile_picture: attendance.profile_picture,
                         };
                     }
-    
+
                     const attendanceDateTime = new Date(attendance.attendance_date_time);
                     const time = attendanceDateTime.toISOString().slice(11, 19); // Extracts hours, minutes, and seconds
                     const date = attendanceDateTime.toISOString().split('T')[0];
-    
+
                     const clockType = attendance.clock_type;
                     const clockRecord = {
                         time: time,
@@ -170,13 +169,14 @@ module.exports = {
                         clock_type: clockType,
                         attendance_picture: attendance.attendance_picture,
                     };
-    
+
                     // Find the corresponding attendance record for the date
                     let attendanceRecord = groupedAttendances[userId].attendance.find(record => record.date === date);
-    
+
                     // If attendance record for the date doesn't exist, create a new one
                     if (!attendanceRecord) {
                         attendanceRecord = {
+                            attendance_id: attendance.attendance_id,
                             date: date,
                             ClockIn: [],
                             ClockOut: [],
@@ -184,14 +184,14 @@ module.exports = {
                         };
                         groupedAttendances[userId].attendance.push(attendanceRecord);
                     }
-    
+
                     // Check if the clock record already exists for the same date and time
                     const isDuplicateClockRecord = attendanceRecord.ClockIn.some(record =>
                         record.time === time && record.clock_type === 'CI'
                     ) || attendanceRecord.ClockOut.some(record =>
                         record.time === time && record.clock_type === 'CO'
                     );
-    
+
                     // If the clock record is not a duplicate, push it to the appropriate array
                     if (!isDuplicateClockRecord) {
                         if (clockType === 'CI') {
@@ -200,7 +200,7 @@ module.exports = {
                             attendanceRecord.ClockOut.push(clockRecord);
                         }
                     }
-    
+
                     // Add progress details to the attendance record
                     const progressRecord = {
                         start_time: attendance.start_time,
@@ -208,7 +208,7 @@ module.exports = {
                         title: attendance.title,
                         description: attendance.description,
                     };
-    
+
                     // Check if the progress record already exists for the same date, start time, and end time
                     const isDuplicateProgressRecord = attendanceRecord.Progress.some(record =>
                         record.start_time === progressRecord.start_time &&
@@ -216,16 +216,16 @@ module.exports = {
                         record.title === progressRecord.title &&
                         record.description === progressRecord.description
                     );
-    
+
                     // If the progress record is not a duplicate, push it to the Progress array
                     if (!isDuplicateProgressRecord) {
                         attendanceRecord.Progress.push(progressRecord);
                     }
                 }
-    
+
                 // Convert the dictionary values to an array
                 modifiedAttendance.push(...Object.values(groupedAttendances));
-    
+
                 return modifiedAttendance;
             } else {
                 return ("no attendances available")
@@ -235,8 +235,8 @@ module.exports = {
             throw error;
         }
     }
-    
-    
+
+
 
 }
 

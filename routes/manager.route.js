@@ -7,6 +7,6 @@ const router = express.Router();
 // router.get('/get-attendance/:userId', managerController.getAttendanceByUserId);
 router.post('/register-employee', managerController.registerEmployee);
 router.get('/get-all-employees', managerController.getAllEmployee);
-router.get('/get-all-employees-attendance', managerController.getAllEmployeesAttendance);
+router.get('/get-all-employees-attendance/:year/:month', managerController.getAllEmployeesAttendance);
 
 module.exports = router;

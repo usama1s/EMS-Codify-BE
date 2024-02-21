@@ -7,8 +7,8 @@ module.exports = {
     // GET ATTENDANCE BY USER ID
     async getAttendanceByUserId(req, res) {
         try {
-            const { userId } = req.query;
-            const Attendance = await sharedService.getAttendanceByUserId(userId);
+            const { userId, year, month } = req.query;
+            const Attendance = await sharedService.getAttendanceByUserId(userId, year, month);
             return res.status(200).json(Attendance);
         } catch (error) {
             console.error("Error creating user:", error);

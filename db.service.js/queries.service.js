@@ -132,10 +132,12 @@ module.exports = {
     FROM attendance
     INNER JOIN users ON attendance.user_id = users.user_id
     WHERE 
-    users.user_type = 2 OR 
-    YEAR(attendance.attendance_date_time) = ? or
-    MONTH(attendance.attendance_date_time) = ? or
-    DAY(attendance.attendance_date_time) = ?;
+    users.user_type = 2
+    AND (
+        (? IS NULL OR YEAR(attendance.attendance_date_time) = ?) 
+        AND 
+        (? IS NULL OR MONTH(attendance.attendance_date_time) = ?)
+    )
     `,
 
     GET_ALL_EMPLOYEE_ATTENDANCE: `
@@ -177,6 +179,11 @@ module.exports = {
 	employee_progress_detail.attendance_id = attendance.attendance_id
     where
 	users.user_type = 3
+    AND (
+        (? IS NULL OR YEAR(attendance.attendance_date_time) = ?) 
+        AND 
+        (? IS NULL OR MONTH(attendance.attendance_date_time) = ?)
+    )
     `,
 
     GET_ATTENDANCE_BY_USER_ID: `
@@ -188,6 +195,11 @@ module.exports = {
     users ON attendance.user_id = users.user_id
     WHERE
     users.user_id=?
+    AND (
+        (? IS NULL OR YEAR(attendance.attendance_date_time) = ?) 
+        AND 
+        (? IS NULL OR MONTH(attendance.attendance_date_time) = ?)
+    )
     `,
 
     GET_ALL_MANAGERS: `

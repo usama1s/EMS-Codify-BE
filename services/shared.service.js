@@ -7,10 +7,10 @@ const convertBase64 = require('../utils/utils');
 module.exports = {
 
     // GET ATTENDANCE BY USER ID
-    async getAttendanceByUserId(userId) {
+    async getAttendanceByUserId(userId, year, month) {
         try {
             const modifiedAttendance = [];
-            const [attendances] = await pool.query(sql.GET_ATTENDANCE_BY_USER_ID, [userId]);
+            const [attendances] = await pool.query(sql.GET_ATTENDANCE_BY_USER_ID, [userId, year, year, month, month]);
 
             if (attendances) {
 

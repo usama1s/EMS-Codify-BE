@@ -4,7 +4,7 @@ const adminController = require('../controllers/admin.controller');
 const router = express.Router();
 
 //ROUTES
-router.get('/get-all-managers-attendance', adminController.getAllManagerAttendance);
+router.get('/get-all-managers-attendance/:year/:month', adminController.getAllManagerAttendance);
 router.get('/get-all-managers', adminController.getAllManagers);
 
 

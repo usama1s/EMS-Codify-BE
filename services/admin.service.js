@@ -42,13 +42,14 @@ module.exports = {
     },
 
     // GET ALL MANAGERS ATTENDANCE
-    async getAllManagerAttendance() {
+    async getAllManagerAttendance(y, m) {
         try {
             const modifiedAttendance = [];
-            const [attendances] = await pool.query(sql.GET_ALL_MANAGER_ATTENDANCE);
+            const year = y ? y : null
+            const month = m ? m : null
+            const [attendances] = await pool.query(sql.GET_ALL_MANAGER_ATTENDANCE, [year , year , month , month ]);
 
             if (attendances) {
-                // Create a dictionary to store attendance records based on user_id
                 const groupedAttendances = {};
 
                 for (const attendance of attendances) {
@@ -62,7 +63,6 @@ module.exports = {
                     if (!(userId in groupedAttendances)) {
                         // If not, initialize an object for that user_id
                         groupedAttendances[userId] = {
-                            attendance_id: attendance.attendance_id,
                             user_id: userId,
                             attendance: [],
                             time_zone: attendance.time_zone,
@@ -92,6 +92,7 @@ module.exports = {
                     // Push the attendance record to the array for the corresponding user_id
                     if (clockType === 'CI') {
                         groupedAttendances[userId].attendance.push({
+                            attendance_id: attendance.attendance_id,
                             date: date,
                             ClockIn: [clockRecord],
                             ClockOut: [],
