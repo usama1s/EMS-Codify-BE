@@ -62,7 +62,7 @@ module.exports = {
     // ADD DAILY PROGRESS OF EMPLOYEES
     async checkProgress(req, res) {
         try {
-            const { userId, date, startTime, endTime } = req.body;
+            const { userId, date, startTime, endTime } = req.query;
             const progress = await sharedService.checkProgress(userId, startTime, date, endTime);
             return res.status(200).json(progress);
         } catch (error) {

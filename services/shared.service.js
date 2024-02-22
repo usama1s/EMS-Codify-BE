@@ -157,7 +157,7 @@ module.exports = {
             const attendanceId = getAttendanceId[0].attendance_id
             const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [attendanceId, startTime, endTime, date]);
             if (isEmployeeProgress.length > 0) {
-                return true
+                return isEmployeeProgress
             }
             else {
                 return false

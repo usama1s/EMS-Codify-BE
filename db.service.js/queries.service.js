@@ -270,7 +270,10 @@ module.exports = {
 
     CHECK_PROGRESS: `
     select
-	*
+	employee_progress_detail.start_time,
+    employee_progress_detail.end_time,
+    employee_progress_detail.title,
+    employee_progress_detail.description
     from
 	attendance
     inner join 
@@ -285,17 +288,6 @@ module.exports = {
     DATE(attendance.attendance_date_time) =?
     `,
 
-    // GET_EMPLOYEE_PROGRESS_ID: `
-    // select
-	// *
-    // from
-	// attendance
-    // inner join employee on
-	// employee.employee_id = employee_progress.employee_id
-    // where
-	// employee_progress.employee_id = ?
-	// and employee_progress.progress_date = ?
-    // `,
     GET_EMPLOYEE_ATTENDANCE_ID: `
     select
 	*
