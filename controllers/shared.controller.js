@@ -71,6 +71,18 @@ module.exports = {
         }
     },
 
+    // ADD DAILY PROGRESS OF EMPLOYEES
+    async checkAllProgressEntered(req, res) {
+        try {
+            const { userId, date, allStartTime} = req.query;
+            const progress = await sharedService.checkAllProgressEntered(userId, allStartTime, date);
+            return res.status(200).json(progress);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
     // GET DAILY PROGRESS OF EMPLOYEES
     async getProgressDetail(req, res) {
         try {

@@ -151,8 +151,6 @@ module.exports = {
     // CHECK PROGRESS IF EXISTS
     async checkProgress(userId, startTime, date, endTime) {
         try {
-            // const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
-            // const empId = employeeId[0].employee_id
             const [getAttendanceId] = await pool.query(sql.GET_EMPLOYEE_ATTENDANCE_ID, [userId, date]);
             const attendanceId = getAttendanceId[0].attendance_id
             const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [attendanceId, startTime, endTime, date]);
@@ -168,6 +166,29 @@ module.exports = {
             throw error;
         }
     },
+
+    async checkAllProgressEntered(userId, allStartTime, date) {
+        try {
+            const [getAttendanceId] = await pool.query(sql.GET_EMPLOYEE_ATTENDANCE_ID, [userId, date]);
+            const attendanceId = getAttendanceId[0].attendance_id;
+
+            let allProgressEntered = true; 
+
+            for (const startTime of allStartTime) {
+                const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [attendanceId, startTime, date, null]);
+                if (isEmployeeProgress.length === 0) {
+                    allProgressEntered = false; 
+                    break;
+                }
+            }
+
+            return allProgressEntered;
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
 
     // GET DAILY PROGRESS OF EMPLOYEES
     async getProgressDetail(attendanceId, date) {
