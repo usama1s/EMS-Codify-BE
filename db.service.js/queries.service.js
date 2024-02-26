@@ -45,20 +45,24 @@ module.exports = {
         FOREIGN KEY (reporting_manager_from_users) REFERENCES users(user_id)
     );`,
 
-    CREATE_TABLE_EMPLOYEE_PROGESS: `CREATE TABLE IF NOT EXISTS employee_progress (
-        employee_progress_id INT AUTO_INCREMENT PRIMARY KEY,
-        employee_id INT,
-        progress_date DATE,
-        FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
-    );`,
-
     CREATE_TABLE_EMPLOYEE_PROGESS_DETAIL: `CREATE TABLE IF NOT EXISTS employee_progress_detail (
         employee_progress_detail_id INT AUTO_INCREMENT PRIMARY KEY,
-        employee_progress_id INT,
-        hours VARCHAR(15),
+        start_time VARCHAR(15),
         title VARCHAR(50),
         description VARCHAR(250),
-        FOREIGN KEY (employee_progress_id) REFERENCES employee_progress(employee_progress_id)
+        end_time VARCHAR(15),
+        attendance_id INT,
+        FOREIGN KEY (attendance_id) REFERENCES attendance(attendance_id)
+    );`,
+
+    CREATE_TABLE_LEAVE: `CREATE TABLE IF NOT EXISTS leave_applied (
+        leave_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        from_date DATE,
+        till_date DATE,
+        leave_category VARCHAR(30),
+        leave_status INT DEFAULT 1,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
     INSERT_INTO_USERS: `INSERT INTO users
@@ -316,4 +320,8 @@ module.exports = {
     and
     DATE(attendance.attendance_date_time) =?
     `,
+
+    INSERT_INTO_LEAVE_APPLIED: `INSERT INTO leave_applied
+    ( user_id, from_date, till_date, leave_category)
+    VALUES( ?, ?, ?, ?);`,
 }

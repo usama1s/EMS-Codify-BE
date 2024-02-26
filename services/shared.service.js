@@ -100,7 +100,7 @@ module.exports = {
         try {
             const [clockInTime] = await pool.query(sql.GET_CLOCKIN_TIME_BY_USERID_AND_DATE, [userId, date]);
             if (clockInTime.length > 0) {
-                const timestamp = clockInTime[0].attendance_date_time; // Assuming timestamp is the key holding the date/time value
+                const timestamp = clockInTime[0].attendance_date_time;
                 const time = new Date(timestamp);
                 const hours = time.getHours();
                 const minutes = time.getMinutes();
@@ -117,19 +117,8 @@ module.exports = {
     async addDailyProgress(userId, progressDetailObj, date) {
         try {
             let attendanceId
-            // const [employeeId] = await pool.query(sql.GET_EMPLOYEE_ID, [userId]);
-            // const empId = employeeId[0].employee_id
-
-
             const [getAttendanceId] = await pool.query(sql.GET_EMPLOYEE_ATTENDANCE_ID, [userId, date]);
-            // if (checkEmployeeProgressId.length == 0) {
-            // const [employeeProgress] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS, [empId, date]);
-            // employeeProgressId = employeeProgress.insertId
-            // }
-            // else {
             attendanceId = getAttendanceId[0].attendance_id
-            // }
-            // for (const progressDetail of progressDetailArray) {
             const [employeeProgressDetails] = await pool.query(sql.INSERT_INTO_EMPLOYEE_PROGRESS_DETAILS,
                 [
                     progressDetailObj.startTime,
@@ -172,12 +161,12 @@ module.exports = {
             const [getAttendanceId] = await pool.query(sql.GET_EMPLOYEE_ATTENDANCE_ID, [userId, date]);
             const attendanceId = getAttendanceId[0].attendance_id;
 
-            let allProgressEntered = true; 
+            let allProgressEntered = true;
 
             for (const startTime of allStartTime) {
                 const [isEmployeeProgress] = await pool.query(sql.CHECK_PROGRESS, [attendanceId, startTime, date, null]);
                 if (isEmployeeProgress.length === 0) {
-                    allProgressEntered = false; 
+                    allProgressEntered = false;
                     break;
                 }
             }
@@ -208,7 +197,19 @@ module.exports = {
             console.error("Error fetching manager attendance:", error);
             throw error;
         }
+    },
+
+    // APPLY FOR LEAVES
+    async applyLeave(userId, from, till, category) {
+        try {
+            const [progressDetails] = await pool.query(sql.INSERT_INTO_LEAVE_APPLIED, [userId, from, till, category]);
+            return { message: "Application Sent" }
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
     }
+
 
 
 }

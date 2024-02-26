@@ -11,5 +11,6 @@ router.post('/add-daily-progress', sharedController.addDailyProgress);
 router.get('/check-progress', sharedController.checkProgress);
 router.get('/check-all-progress-entered', sharedController.checkAllProgressEntered);
 router.get('/get-progress-detail/:attendanceId/:date', sharedController.getProgressDetail);
+router.post('/apply-for-leave', sharedController.applyLeave);
 
 module.exports = router;

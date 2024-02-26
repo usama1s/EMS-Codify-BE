@@ -18,5 +18,12 @@ contract status[
     3: finished
 ]
 
+leave status[
+    1: pending
+    2: approved
+    3: rejected
+]
+
+
 
 https://docs.google.com/document/d/1XLaWuPieXwyNmNFnTm1p0W0ygQbVjSCddugmXnhN-T4/edit?pli=1
