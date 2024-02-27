@@ -120,17 +120,6 @@ module.exports = {
     limit 1;
     `,
 
-    // GET_ALL_MANAGER_ATTENDANCE: `
-    // SELECT
-    // *
-    // FROM
-    // attendance
-    // INNER JOIN
-    // users ON attendance.user_id = users.user_id
-    // WHERE
-    // users.user_type = 2;
-    // `,
-
     GET_ALL_MANAGER_ATTENDANCE: `
     SELECT *
     FROM attendance
@@ -154,20 +143,6 @@ module.exports = {
     WHERE
     users.user_type = 3;
     `,
-
-    // GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS: `
-    // SELECT
-    // *
-    // FROM
-    // attendance
-    // INNER JOIN
-    // users ON attendance.user_id = users.user_id
-    // inner join employee on employee.user_id =users.user_id 
-    // inner join employee_progress on employee_progress.employee_id =employee.employee_id 
-    // inner join employee_progress_detail on employee_progress_detail.employee_progress_id  =employee_progress.employee_progress_id  
-    // WHERE
-    // users.user_type = 3
-    // `,
 
     GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS: `
     select
@@ -324,4 +299,27 @@ module.exports = {
     INSERT_INTO_LEAVE_APPLIED: `INSERT INTO leave_applied
     ( user_id, from_date, till_date, leave_category)
     VALUES( ?, ?, ?, ?);`,
+
+    GET_ALL_PENDING_LEAVES: `
+    SELECT
+    leave_applied.leave_id,
+    users.first_name,
+    users.last_name,
+    leave_applied.from_date,
+    leave_applied.till_date,
+    leave_applied.leave_category,
+    leave_applied.leave_status
+    FROM
+    leave_applied
+    inner join users on
+	leave_applied.user_id = users.user_id
+    WHERE
+    leave_applied.leave_status= 1
+    `,
+
+    UPDATE_LEAVE_STATUS: `
+    UPDATE leave_applied
+    SET leave_status=?
+    WHERE leave_id=?;
+    `,
 }

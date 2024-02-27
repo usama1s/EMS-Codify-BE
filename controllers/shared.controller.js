@@ -99,7 +99,7 @@ module.exports = {
     async applyLeave(req, res) {
         try {
             const { userId, from, till, category } = req.body;
-            const application = await sharedService.applyLeave(userId, from, till, category );
+            const application = await sharedService.applyLeave(userId, from, till, category);
             return res.status(200).json(application.message);
         } catch (error) {
             console.error("Error while appling leave", error);
@@ -107,5 +107,26 @@ module.exports = {
         }
     },
 
+    // GET ALL PENDING LEAVES
+    async getAllPendingleaves(req, res) {
+        try {
+            const allPendingleaves = await sharedService.getAllPendingleaves();
+            return res.status(200).json(allPendingleaves);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
 
+    // UPDATE LEAVE STATUS
+    async updateLeaveStatus(req, res) {
+        try {
+            const { leaveId, status } = req.body
+            const allPendingleaves = await sharedService.updateLeaveStatus(leaveId, status);
+            return res.status(200).json(allPendingleaves);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
 }

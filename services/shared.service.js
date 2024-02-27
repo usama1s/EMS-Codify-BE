@@ -208,8 +208,37 @@ module.exports = {
             console.error("Error fetching manager attendance:", error);
             throw error;
         }
-    }
+    },
 
+    // GET ALL PENDING LEAVES
+    async getAllPendingleaves(attendanceId, date) {
+        try {
+            const [allPendingleaves] = await pool.query(sql.GET_ALL_PENDING_LEAVES, [attendanceId, date]);
+            const leaves = []
+            for (const allPendingLeave of allPendingleaves) {
+                const { leave_id, first_name, last_name, leave_category } = allPendingLeave;
+                const from_date = new Date(allPendingLeave.from_date).toISOString().split('T')[0];
+                const till_date = new Date(allPendingLeave.till_date).toISOString().split('T')[0];
+                const leave_status = allPendingLeave.leave_status === 1 ? 'pending' : allPendingLeave.leave_status;
+                leaves.push({ leave_id, first_name, last_name, from_date, till_date, leave_category, leave_status });
+            }
+            return leaves;
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
+    // UPDATE LEAVE STATUS
+    async updateLeaveStatus(leaveId, status) {
+        try {
+            const [leavesStatus] = await pool.query(sql.UPDATE_LEAVE_STATUS, [status, leaveId]);
+            return{message:"leave status changed"}
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
 
 
 }
