@@ -129,4 +129,17 @@ module.exports = {
             return res.status(401).json({ error: "Failed " });
         }
     },
+
+     // GET ALL LEAVES APPLIED
+     async getAllLeavesAppliedByUserId(req, res) {
+        try {
+            const{userId}=req.query
+            const allPendingleaves = await sharedService.getAllLeavesAppliedByUserId(userId);
+            return res.status(200).json(allPendingleaves);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+    
 }

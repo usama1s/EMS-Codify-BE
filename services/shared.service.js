@@ -1,6 +1,7 @@
 const { pool } = require("../db.service.js/db.conn");
 const sql = require("../db.service.js/queries.service");
 const convertBase64 = require('../utils/utils');
+const nodemailer = require('nodemailer');
 
 
 
@@ -213,13 +214,22 @@ module.exports = {
     // GET ALL PENDING LEAVES
     async getAllPendingleaves(attendanceId, date) {
         try {
-            const [allPendingleaves] = await pool.query(sql.GET_ALL_PENDING_LEAVES, [attendanceId, date]);
+            const [allPendingleaves] = await pool.query(sql.GET_ALL_LEAVES, [attendanceId, date]);
             const leaves = []
+            let leave_status;
             for (const allPendingLeave of allPendingleaves) {
                 const { leave_id, first_name, last_name, leave_category } = allPendingLeave;
                 const from_date = new Date(allPendingLeave.from_date).toISOString().split('T')[0];
                 const till_date = new Date(allPendingLeave.till_date).toISOString().split('T')[0];
-                const leave_status = allPendingLeave.leave_status === 1 ? 'pending' : allPendingLeave.leave_status;
+                if (allPendingLeave.leave_status === 1) {
+                    leave_status = 'pending'
+                }
+                else if (allPendingLeave.leave_status === 2) {
+                    leave_status = 'approved'
+                }
+                else if (allPendingLeave.leave_status === 3) {
+                    leave_status = 'rejected'
+                }
                 leaves.push({ leave_id, first_name, last_name, from_date, till_date, leave_category, leave_status });
             }
             return leaves;
@@ -230,15 +240,73 @@ module.exports = {
     },
 
     // UPDATE LEAVE STATUS
+
     async updateLeaveStatus(leaveId, status) {
         try {
+            const [emailResult] = await pool.query(sql.GET_EMAIL_BY_LEAVE_ID, [leaveId]);
+            const email = emailResult[0].email;
+            let text;
+
             const [leavesStatus] = await pool.query(sql.UPDATE_LEAVE_STATUS, [status, leaveId]);
-            return{message:"leave status changed"}
+
+            // Check if status is 'rejected' and then send an email
+            if (status === 3) {
+                text = 'Your leave request has been rejected.'
+            } else if (status === 2) {
+                text = 'Your leave request has been Approved.'
+            }
+
+            const transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                auth: {
+                    user: 'noreply@codify.pk',
+                    pass: 'Codify1@3'
+                }
+            });
+
+            // Define email options
+            const mailOptions = {
+                from: 'noreply@codify.pk',
+                to: email,
+                subject: 'Reply To Leave Application',
+                text: text
+            };
+
+            // Send the email
+            await transporter.sendMail(mailOptions);
+
+            return { message: "leave status changed" };
         } catch (error) {
-            console.error("Error fetching manager attendance:", error);
+            console.error("Error updating leave status or sending email:", error);
             throw error;
         }
     },
 
 
+    async getAllLeavesAppliedByUserId(userId) {
+        try {
+            const [allLeaves] = await pool.query(sql.GET_ALL_LEAVES_BY_USER_ID, [userId]);
+            const leaves = []
+            let leave_status;
+            for (const allLeave of allLeaves) {
+                const { leave_id, first_name, last_name, leave_category } = allLeave;
+                const from_date = new Date(allLeave.from_date).toISOString().split('T')[0];
+                const till_date = new Date(allLeave.till_date).toISOString().split('T')[0];
+                if (allLeave.leave_status === 1) {
+                    leave_status = 'pending'
+                }
+                else if (allLeave.leave_status === 2) {
+                    leave_status = 'approved'
+                }
+                else if (allLeave.leave_status === 3) {
+                    leave_status = 'rejected'
+                }
+                leaves.push({ leave_id, first_name, last_name, from_date, till_date, leave_category, leave_status });
+            }
+            return leaves;
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
 }

@@ -300,7 +300,7 @@ module.exports = {
     ( user_id, from_date, till_date, leave_category)
     VALUES( ?, ?, ?, ?);`,
 
-    GET_ALL_PENDING_LEAVES: `
+    GET_ALL_LEAVES: `
     SELECT
     leave_applied.leave_id,
     users.first_name,
@@ -313,13 +313,34 @@ module.exports = {
     leave_applied
     inner join users on
 	leave_applied.user_id = users.user_id
-    WHERE
-    leave_applied.leave_status= 1
     `,
 
     UPDATE_LEAVE_STATUS: `
     UPDATE leave_applied
     SET leave_status=?
     WHERE leave_id=?;
+    `,
+
+    GET_ALL_LEAVES_BY_USER_ID: `
+    SELECT
+    leave_applied.leave_id,
+    users.first_name,
+    users.last_name,
+    leave_applied.from_date,
+    leave_applied.till_date,
+    leave_applied.leave_category,
+    leave_applied.leave_status
+    FROM
+    leave_applied
+    inner join users on
+	leave_applied.user_id = users.user_id
+    where 
+    leave_applied.user_id=?
+    `,
+
+    GET_EMAIL_BY_LEAVE_ID: `
+    select users.email  from leave_applied
+	inner join users on leave_applied.user_id =users.user_id  
+	where leave_applied.leave_id  =?
     `,
 }

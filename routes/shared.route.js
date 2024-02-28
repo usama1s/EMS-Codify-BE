@@ -14,5 +14,6 @@ router.get('/get-progress-detail/:attendanceId/:date', sharedController.getProgr
 router.post('/apply-for-leave', sharedController.applyLeave);
 router.get('/get-all-pending-leaves', sharedController.getAllPendingleaves);
 router.put('/update-leave-status', sharedController.updateLeaveStatus);
+router.get('/get-all-leaves-applied-by-userid', sharedController.getAllLeavesAppliedByUserId);
 
 module.exports = router;
