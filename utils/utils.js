@@ -1,6 +1,9 @@
 const fs = require('fs');
 const fsPromise = require('fs').promises;
 const path = require('path');
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
 
 module.exports = {
 
@@ -97,22 +100,55 @@ module.exports = {
     // CONVERT TIME TO EST
     convertToEST: (date_time, timezone) => {
         const etOffset = -4 * 60; // Offset for Eastern Time (ET) in minutes
-    
+
         // Check if the timezone is already Eastern Time (ET)
         if (timezone === 'EST' || timezone === 'EDT') {
             return date_time;
         }
-    
+
         // Convert to UTC time
         const utcTime = new Date(date_time.getTime() + date_time.getTimezoneOffset() * 60000);
-    
+
         // Convert to Eastern Time (ET)
         const estTime = new Date(utcTime.getTime() + etOffset * 60000);
-    
+
         return estTime;
     },
-    
 
+
+    sendEmail: async (email, status) => {
+        let text;
+        if (status === 3) {
+            text = 'Your leave request has been rejected.'
+        } else if (status === 2) {
+            text = 'Your leave request has been Approved.'
+        }
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.SMTP_EMAIL,
+                pass: process.env.SMTP_PASS
+            },
+            tls: { rejectUnauthorized: false },
+        });
+        const mailOptions = {
+            from: process.env.SMTP_EMAIL,
+            to: email,
+            subject: 'Reply To Leave Application',
+            text: text
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error occurred:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+        });
+    },
 
 
 }

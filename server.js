@@ -5,7 +5,6 @@ const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv');
 const db = require('./db.service.js/db.conn');
 const index = require('./routes/index');
-
 dotenv.config();
 
 const app = express();

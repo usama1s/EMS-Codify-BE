@@ -4,18 +4,6 @@ const managerService = require("../services/manager.service");
 
 module.exports = {
 
-    // GET ALL MANAGERS ATTENDANCE
-    // async getAttendanceByUserId(req, res) {
-    //     try {
-    //         const { userId } = req.query;
-    //         const managerAttendance = await managerService.getAttendanceByUserId(userId);
-    //         return res.status(200).json(managerAttendance);
-    //     } catch (error) {
-    //         console.error("Error creating user:", error);
-    //         return res.status(401).json({ error: "Failed add attencdence" });
-    //     }
-    // },
-
     // GET ALL EMPLOYEE
     async getAllEmployee(req, res) {
         try {
@@ -27,7 +15,7 @@ module.exports = {
         }
     },
 
-    // REGISTER EMPLOYEE
+    // REGISTER NORMAL EMPLOYEES 
     async registerEmployee(req, res) {
         try {
             const userDetail = req.body;
@@ -43,7 +31,19 @@ module.exports = {
     async getAllEmployeesAttendance(req, res) {
         try {
             const { year, month } = req.query
-            const attendance = await managerService.getAllEmployeesAttendance(year,month);
+            const attendance = await managerService.getAllEmployeesAttendance(year, month);
+            return res.status(200).json(attendance);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+    // ADD ASSETS
+    async addAsset(req, res) {
+        try {
+            const { year, month } = req.query
+            const attendance = await managerService.addAsset(year, month);
             return res.status(200).json(attendance);
         } catch (error) {
             console.error("Error creating user:", error);

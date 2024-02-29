@@ -65,6 +65,27 @@ module.exports = {
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
+    CREATE_TABLE_ASSETS: `CREATE TABLE IF NOT EXISTS asset (
+        asset_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        asset_title VARCHAR(30),
+        asset_description VARCHAR(255),
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    );`,
+
+    CREATE_TABLE_ASSETS_FILES: `CREATE TABLE IF NOT EXISTS asset_files (
+        asset_files_id INT AUTO_INCREMENT PRIMARY KEY,
+        asset_id INT,
+        picture_1 VARCHAR(255),
+        picture_2 VARCHAR(255),
+        picture_3 VARCHAR(255),
+        picture_4 VARCHAR(255),
+        picture_5 VARCHAR(255),
+        picture_6 VARCHAR(255),
+        picture_7 VARCHAR(255),
+        FOREIGN KEY (asset_id) REFERENCES asset(asset_id)
+    );`,
+
     INSERT_INTO_USERS: `INSERT INTO users
     (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,

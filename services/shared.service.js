@@ -1,8 +1,7 @@
 const { pool } = require("../db.service.js/db.conn");
 const sql = require("../db.service.js/queries.service");
 const convertBase64 = require('../utils/utils');
-const nodemailer = require('nodemailer');
-
+const utils = require('../utils/utils');
 
 
 module.exports = {
@@ -243,39 +242,15 @@ module.exports = {
 
     async updateLeaveStatus(leaveId, status) {
         try {
-            const [emailResult] = await pool.query(sql.GET_EMAIL_BY_LEAVE_ID, [leaveId]);
-            const email = emailResult[0].email;
-            let text;
-
             const [leavesStatus] = await pool.query(sql.UPDATE_LEAVE_STATUS, [status, leaveId]);
-
-            // Check if status is 'rejected' and then send an email
-            if (status === 3) {
-                text = 'Your leave request has been rejected.'
-            } else if (status === 2) {
-                text = 'Your leave request has been Approved.'
-            }
-
-            const transporter = nodemailer.createTransport({
-                service: 'Gmail',
-                auth: {
-                    user: 'noreply@codify.pk',
-                    pass: 'Codify1@3'
+            if(leavesStatus.affectedRows==1){
+                const [emailResult] = await pool.query(sql.GET_EMAIL_BY_LEAVE_ID, [leaveId]);
+                const email = emailResult[0].email;
+                let sendEmail = utils.sendEmail(email, status);
+                if(sendEmail){
+                    return { message: "Email sent" };
                 }
-            });
-
-            // Define email options
-            const mailOptions = {
-                from: 'noreply@codify.pk',
-                to: email,
-                subject: 'Reply To Leave Application',
-                text: text
-            };
-
-            // Send the email
-            await transporter.sendMail(mailOptions);
-
-            return { message: "leave status changed" };
+            }
         } catch (error) {
             console.error("Error updating leave status or sending email:", error);
             throw error;

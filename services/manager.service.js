@@ -91,6 +91,7 @@ module.exports = {
         }
     },
 
+    // REGISTER NORMAL EMPLOYEES 
     async registerEmployee(userDetail) {
         try {
             const {
@@ -124,7 +125,7 @@ module.exports = {
     },
 
     // GET ALL EMPLOYEES ATTENDANCE   
-    async getAllEmployeesAttendance(year,month) {
+    async getAllEmployeesAttendance(year, month) {
         try {
             const modifiedAttendance = [];
             const [attendances] = await pool.query(sql.GET_ALL_EMPLOYEE_ATTENDANCE_AND_PROGRESS, [year, year, month, month]);
@@ -234,95 +235,38 @@ module.exports = {
             console.error("Error fetching manager attendance:", error);
             throw error;
         }
-    }
+    },
 
+    // ADD ASSETS
+    async addAsset(userDetail) {
+        try {
+            const {
+                email,
+                password,
+                designation,
+                first_name,
+                last_name,
+                date_of_joining,
+            } = userDetail;
 
+            const [isUserRegistered] = await pool.query(sql.CHECK_USER_REGISTERED, [
+                email,
+                3,
+            ]);
+            if (!isUserRegistered.length) {
+                const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, 3, designation, date_of_joining]);
+                const userId = registerUser.insertId
+                await pool.query(sql.INSERT_INTO_EMPLOYEE, [userId]);
 
+                return { message: "Employee Created Successfully" }
+            } else {
+                return { message: "Employee Already Registered " }
+            }
+        }
+
+        catch (error) {
+            console.error("Error creating user:", error);
+            throw error;
+        }
+    },
 }
-
-
-
-
-// [
-//     {
-//         "attendance_id": 41,
-//         "user_id": 2,
-//         "attendance": [
-//             {
-//                 "date": "2024-02-01",
-//                 "ClockIn": [
-//                     {
-//                         "time": "19:43:44",
-//                         "location": "33.6494595,73.075933",
-//                         "clock_type": "CI",
-//                         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
-//                     }
-//                 ],
-//                 "ClockOut": [
-//                     {
-//                         "time": "19:45:14",
-//                         "location": "33.6494595,73.075933",
-//                         "clock_type": "CO",
-//                         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
-//                     }
-//                 ],
-//                 "Progress": [
-//                     {
-//                         "start_time": "7:30",
-//                         "end_time": "8:00",
-//                         "title": "sadsadasd",
-//                         "description": "dasdsadasd"
-//                     },
-//                     {
-//                         "start_time": "9:30",
-//                         "end_time": "10:00",
-//                         "title": "sadsadasd",
-//                         "description": "dasdsadasd"
-//                     }
-//                 ]
-//             },
-//             {
-//                 "date": "2024-02-07",
-//                 "ClockIn": [
-//                     {
-//                         "time": "20:29:22",
-//                         "location": "33.6494595,73.075933",
-//                         "clock_type": "CI",
-//                         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
-//                     }
-//                 ],
-//                 "ClockOut": [
-//                     {
-//                         "time": "20:29:48",
-//                         "location": "33.6494595,73.075933",
-//                         "clock_type": "CO",
-//                         "attendance_picture": "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAi8aSw/eE9kxz6YYf1oDxL/AMFxlpkqgcriWME/LzoItSY70iZ28neQI5bcqOtZSdlCWt1YWXThbiJ7qOOG4BY+pqtu3zgayN/b8aWsX72blguPEBzEZ5W+eKysq/wClZZx5EaZzP1Vx8eTg5HJfF/3KE1JY4eK7IyM2J4pFH86zU4Y4NT0u4jPiS8QZxvvWVldzk+1pI8OnFWSbUraP4tsJkY6k1lZWUSZKkj//2Q=="
-//                     }
-//                 ],
-//                 "Progress": [
-//                     {
-//                         "start_time": "7:30",
-//                         "end_time": "8:00",
-//                         "title": "sadsadasd",
-//                         "description": "dasdsadasd"
-//                     },
-//                     {
-//                         "start_time": "8:00",
-//                         "end_time": "09:00",
-//                         "title": "sadsadasd",
-//                         "description": "dasdsadasd"
-//                     }
-//                 ]
-//             }
-//         ],
-//         "time_zone": "EST",
-//         "first_name": "test",
-//         "last_name": "manager",
-//         "email": "test@manager.com",
-//         "password": "123456789",
-//         "user_type": 2,
-//         "designation": "Manager",
-//         "date_of_joining": null,
-//         "profile_picture": null
-//     },
-// ]
