@@ -323,5 +323,25 @@ module.exports = {
         }
     },
 
+    // GET ALL USERS
+    async allotAsset(allotmentData) {
+        try {
+            const { assetId, pictures, userId } = allotmentData
+            let allotFile1;
+            let allotFile2;
+            if (pictures[0]) {
+                allotFile1 = await utils.base64ToJpg(pictures[0]);
+            }
+            if (pictures[1]) {
+                allotFile2 = await utils.base64ToJpg(pictures[1]);
+            }
+            const [allot] = await pool.query(sql.INSERT_INTO_ALLOT_ASSET, [assetId, userId, allotFile1 ? allotFile1 : null, allotFile2 ? allotFile2 : null]);
+            return { message: "Asset Alloted" };
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
 
 }

@@ -412,4 +412,8 @@ module.exports = {
     inner join asset_files on
 	asset.asset_id = asset_files.asset_id
     `,
+
+    INSERT_INTO_ALLOT_ASSET: `INSERT INTO alloted_asset
+    ( asset_id, user_id, picture_1, picture_2)
+    VALUES(?, ?, ?, ?);`,
 }

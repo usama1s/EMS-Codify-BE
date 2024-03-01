@@ -72,4 +72,16 @@ module.exports = {
             return res.status(401).json({ error: error });
         }
     },
+
+    // ADD ASSETS
+    async allotAsset(req, res) {
+        try {
+            const allotmentData = req.body
+            const assets = await managerService.allotAsset(allotmentData);
+            return res.status(200).json(assets);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
 }
