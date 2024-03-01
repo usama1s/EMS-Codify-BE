@@ -86,6 +86,16 @@ module.exports = {
         FOREIGN KEY (asset_id) REFERENCES asset(asset_id)
     );`,
 
+    CREATE_TABLE_ALLOTED_ASSET: `CREATE TABLE IF NOT EXISTS alloted_asset (
+        alloted_asset_id INT AUTO_INCREMENT PRIMARY KEY,
+        asset_id INT,
+        user_id INT,
+        picture_1 VARCHAR(255),
+        picture_2 VARCHAR(255),
+        FOREIGN KEY (asset_id) REFERENCES asset(asset_id),  
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    );`,
+
     INSERT_INTO_USERS: `INSERT INTO users
     (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,
@@ -223,6 +233,17 @@ module.exports = {
     where
 	users.user_type =?;
     `,
+
+    GET_ALL_USERS: `
+    select
+	user_id,
+    first_name,
+    last_name
+    from
+	users
+    where
+	users.user_type =? or users.user_type =?;
+     `,
 
     GET_CLOCKIN_STATUS_BY_USERID_AND_DATE: `
     select
@@ -363,5 +384,32 @@ module.exports = {
     select users.email  from leave_applied
 	inner join users on leave_applied.user_id =users.user_id  
 	where leave_applied.leave_id  =?
+    `,
+
+    INSERT_INTO_ASSETS: `INSERT INTO asset
+    (user_id, asset_title, asset_description,asset_company)
+    VALUES(?, ?, ?, ?);`,
+
+    INSERT_INTO_ASSET_FILES: `INSERT INTO asset_files
+    (asset_id, picture_1, picture_2, picture_3, picture_4, picture_5, picture_6, picture_7)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?);`,
+
+    GET_ALL_ASSETS: `
+    select
+	asset.asset_id,
+	asset.asset_title,
+	asset.asset_description,
+	asset.asset_company,
+	asset_files.picture_1,
+	asset_files.picture_2,
+	asset_files.picture_3,
+	asset_files.picture_4,
+	asset_files.picture_5,
+	asset_files.picture_6,
+	asset_files.picture_7
+    from
+	asset
+    inner join asset_files on
+	asset.asset_id = asset_files.asset_id
     `,
 }

@@ -24,7 +24,10 @@ async function createDatabase() {
             sql.CREATE_TABLE_MANAGER,
             sql.CREATE_TABLE_EMPLOYEE,
             sql.CREATE_TABLE_EMPLOYEE_PROGESS_DETAIL,
-            sql.CREATE_TABLE_LEAVE
+            sql.CREATE_TABLE_LEAVE,
+            sql.CREATE_TABLE_ASSETS,
+            sql.CREATE_TABLE_ASSETS_FILES,
+            sql.CREATE_TABLE_ALLOTED_ASSET
         ];
 
         // Iterate over the array and create each table

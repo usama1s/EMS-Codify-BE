@@ -1,6 +1,7 @@
 const { pool } = require("../db.service.js/db.conn");
 const sql = require("../db.service.js/queries.service");
-const convertBase64 = require('../utils/utils');
+const utils = require('../utils/utils');
+
 
 
 
@@ -17,8 +18,8 @@ module.exports = {
                 const groupedAttendances = {};
 
                 for (const attendance of attendances) {
-                    const filename = convertBase64.extractFilenameFromURL(attendance.attendance_picture);
-                    const base64 = convertBase64.convertFileIntoBase64(filename);
+                    const filename = utils.extractFilenameFromURL(attendance.attendance_picture);
+                    const base64 = utils.convertFileIntoBase64(filename);
                     attendance.attendance_picture = base64;
 
                     const userId = attendance.user_id;
@@ -135,8 +136,8 @@ module.exports = {
                 const groupedAttendances = {};
 
                 for (const attendance of attendances) {
-                    const filename = convertBase64.extractFilenameFromURL(attendance.attendance_picture);
-                    const base64 = convertBase64.convertFileIntoBase64(filename);
+                    const filename = utils.extractFilenameFromURL(attendance.attendance_picture);
+                    const base64 = utils.convertFileIntoBase64(filename);
                     attendance.attendance_picture = base64;
 
                     const userId = attendance.user_id;
@@ -238,30 +239,24 @@ module.exports = {
     },
 
     // ADD ASSETS
-    async addAsset(userDetail) {
+    async addAsset(assetData) {
         try {
-            const {
-                email,
-                password,
-                designation,
-                first_name,
-                last_name,
-                date_of_joining,
-            } = userDetail;
 
-            const [isUserRegistered] = await pool.query(sql.CHECK_USER_REGISTERED, [
-                email,
-                3,
-            ]);
-            if (!isUserRegistered.length) {
-                const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, 3, designation, date_of_joining]);
-                const userId = registerUser.insertId
-                await pool.query(sql.INSERT_INTO_EMPLOYEE, [userId]);
-
-                return { message: "Employee Created Successfully" }
-            } else {
-                return { message: "Employee Already Registered " }
+            const { userId, title, description, company, pictures } = assetData
+            let base64Array = [];
+            const [addAsset] = await pool.query(sql.INSERT_INTO_ASSETS, [userId, title, description, company]);
+            const assetId = addAsset.insertId
+            let i;
+            for (i = 0; i < 7; i++) {
+                if (pictures[i]) {
+                    const assetFilePath = await utils.base64ToJpg(pictures[i]);
+                    base64Array.push(assetFilePath);
+                } else {
+                    base64Array.push(null);
+                }
             }
+            await pool.query(sql.INSERT_INTO_ASSET_FILES, [assetId, ...base64Array]);
+            return { message: "Asset Added" }
         }
 
         catch (error) {
@@ -269,4 +264,64 @@ module.exports = {
             throw error;
         }
     },
+
+    // GET ALL ASSETS
+    async getAllAsset() {
+        try {
+            const [assets] = await pool.query(sql.GET_ALL_ASSETS);
+            const picturesArrayBase64 = [];
+
+            assets.forEach(row => {
+                const assetObject = {
+                    assetId: row.asset_id,
+                    title: row.asset_title,
+                    description: row.asset_description,
+                    company: row.asset_company,
+                    pictures: []
+                };
+
+                const pictures = [
+                    row.picture_1,
+                    row.picture_2,
+                    row.picture_3,
+                    row.picture_4,
+                    row.picture_5,
+                    row.picture_6,
+                    row.picture_7
+                ];
+
+                pictures.forEach(picture => {
+                    if (picture !== null) {
+                        const pictureUrl = picture;
+                        const pictureFilepath = utils.extractFilenameFromURL(pictureUrl);
+                        const pictureBase64 = utils.convertFileIntoBase64(pictureFilepath);
+                        assetObject.pictures.push(pictureBase64);
+                    } else {
+                        assetObject.pictures.push(null);
+                    }
+                });
+
+                picturesArrayBase64.push(assetObject);
+            });
+
+            return picturesArrayBase64;
+        } catch (error) {
+            console.error("Error retrieving assets:", error);
+            throw error;
+        }
+    },
+
+    // GET ALL USERS
+    async getUsers() {
+        try {
+            const [users] = await pool.query(sql.GET_ALL_USERS, [2, 3]);
+            return users;
+
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
+
 }

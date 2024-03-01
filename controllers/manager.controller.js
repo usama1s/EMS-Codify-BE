@@ -42,12 +42,34 @@ module.exports = {
     // ADD ASSETS
     async addAsset(req, res) {
         try {
-            const { year, month } = req.query
-            const attendance = await managerService.addAsset(year, month);
-            return res.status(200).json(attendance);
+            const assetData = req.body
+            const assets = await managerService.addAsset(assetData);
+            return res.status(200).json(assets);
         } catch (error) {
             console.error("Error creating user:", error);
             return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+     // GET ALL ASSETS
+     async getAllAsset(req,res) {
+        try {
+            const assets = await managerService.getAllAsset();
+            return res.status(200).json(assets);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+     // GET ALL USERS
+     async getUsers(req, res) {
+        try {
+            const users = await managerService.getUsers();
+            return res.status(200).json(users);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: error });
         }
     },
 }
