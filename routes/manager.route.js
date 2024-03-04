@@ -13,5 +13,8 @@ router.get('/get-all-employees-attendance/:year/:month', managerController.getAl
 router.get('/get-all-assets', managerController.getAllAsset);
 router.get('/get-all-assets-not-alloted', managerController.getAllAssetNotAlloted);
 router.get('/get-all-alloted-assets', managerController.getAllAllottedAsset);
+router.get('/get-all-managers', managerController.getAllManagers);
+router.post('/create-employee-contract', managerController.createContact);
+
 
 module.exports = router;

@@ -110,9 +110,6 @@ module.exports = {
             ]);
             if (!isUserRegistered.length) {
                 const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, 3, designation, date_of_joining]);
-                const userId = registerUser.insertId
-                await pool.query(sql.INSERT_INTO_EMPLOYEE, [userId]);
-
                 return { message: "Employee Created Successfully" }
             } else {
                 return { message: "Employee Already Registered " }
@@ -242,9 +239,9 @@ module.exports = {
     async addAsset(assetData) {
         try {
 
-            const { userId, title, description, company, pictures } = assetData
+            const { userId, title, description, company, pictures, date } = assetData
             let base64Array = [];
-            const [addAsset] = await pool.query(sql.INSERT_INTO_ASSETS, [userId, title, description, company]);
+            const [addAsset] = await pool.query(sql.INSERT_INTO_ASSETS, [userId, title, description, company, date]);
             const assetId = addAsset.insertId
             let i;
             for (i = 0; i < 7; i++) {
@@ -332,7 +329,7 @@ module.exports = {
     // ALLOTMENT OF ASSETS
     async allotAsset(allotmentData) {
         try {
-            const { assetId, pictures, userId } = allotmentData
+            const { assetId, pictures, userId, date, title, description } = allotmentData
             let allotFile1;
             let allotFile2;
             if (pictures[0]) {
@@ -341,7 +338,7 @@ module.exports = {
             if (pictures[1]) {
                 allotFile2 = await utils.base64ToJpg(pictures[1]);
             }
-            const [allot] = await pool.query(sql.INSERT_INTO_ALLOT_ASSET, [assetId, userId, allotFile1 ? allotFile1 : null, allotFile2 ? allotFile2 : null]);
+            const [allot] = await pool.query(sql.INSERT_INTO_ALLOT_ASSET, [assetId, userId, allotFile1 ? allotFile1 : null, allotFile2 ? allotFile2 : null, title, description, date]);
             return { message: "Asset Alloted" };
         } catch (error) {
             console.error("Error fetching manager attendance:", error);
@@ -408,8 +405,8 @@ module.exports = {
             const picturesArrayBase64 = [];
             for (const asset of assets) {
                 const assetObject = {
-                    firstName:asset.first_name,
-                    lastName:asset.last_name,
+                    firstName: asset.first_name,
+                    lastName: asset.last_name,
                     assetId: asset.asset_id,
                     title: asset.asset_title,
                     description: asset.asset_description,
@@ -444,6 +441,55 @@ module.exports = {
             return picturesArrayBase64;
         } catch (error) {
             console.error("Error retrieving assets:", error);
+            throw error;
+        }
+    },
+
+    // GET ALL MANAGERS REGISTERED  
+    async getAllManagers() {
+        try {
+            const managerMap = new Map();
+            const [managers] = await pool.query(sql.GET_ALL_MANAGERS, [2]);
+
+            managers.forEach(manager => {
+                const existingManager = managerMap.get(manager.user_id);
+
+                if (existingManager) {
+                    existingManager.roles.push(manager.role);
+                } else {
+                    managerMap.set(manager.user_id, {
+                        "user_id": manager.user_id,
+                        "first_name": manager.first_name,
+                        "last_name": manager.last_name,
+                        "email": manager.email,
+                        "password": manager.password,
+                        "user_type": manager.user_type,
+                        "roles": [manager.role],
+                        "designation": manager.designation,
+                        "date_of_joining": ""
+                    });
+                }
+            });
+
+            const modifiedManagers = Array.from(managerMap.values());
+            return modifiedManagers;
+
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
+    // REGISTER NORMAL EMPLOYEES 
+    async createContact(contractDetail) {
+        try {
+            const { employeeId, managerId, startDate, endDate, pay, pdf} = contractDetail;
+
+            const [contract] = await pool.query(sql.INSERT_INTO_EMPLOYEE_CONTRACT, [employeeId, managerId, startDate, endDate, pay, pdf]);
+        }
+
+        catch (error) {
+            console.error("Error creating user:", error);
             throw error;
         }
     },

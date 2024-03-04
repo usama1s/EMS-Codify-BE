@@ -104,9 +104,9 @@ module.exports = {
     (user_id,role)
      VALUES (?,?)`,
 
-    INSERT_INTO_EMPLOYEE: `INSERT INTO employee
-     (user_id)
-     VALUES(?);`,
+    INSERT_INTO_EMPLOYEE_CONTRACT: `INSERT INTO employee_contract
+    (user_id, reporting_manager_from_users, contract_start_date, contract_end_date, pay, signed_contract_pdf)
+    VALUES(?, ?, ?, ?, ?, ?);`,
 
     INSERT_INTO_ATTENDANCE: `INSERT INTO attendance
     (user_id, attendance_picture, location, attendance_date_time, time_zone, clock_type)
@@ -228,10 +228,8 @@ module.exports = {
 	*
     from
 	users
-    inner join employee on
-	employee.user_id = users.user_id
     where
-	users.user_type =?;
+	user_type =?;
     `,
 
     GET_ALL_USERS: `
@@ -387,8 +385,8 @@ module.exports = {
     `,
 
     INSERT_INTO_ASSETS: `INSERT INTO asset
-    (user_id, asset_title, asset_description,asset_company)
-    VALUES(?, ?, ?, ?);`,
+    (user_id, asset_title, asset_description,asset_company, adding_date)
+    VALUES(?, ?, ?, ?, ?);`,
 
     INSERT_INTO_ASSET_FILES: `INSERT INTO asset_files
     (asset_id, picture_1, picture_2, picture_3, picture_4, picture_5, picture_6, picture_7)
@@ -414,8 +412,8 @@ module.exports = {
     `,
 
     INSERT_INTO_ALLOT_ASSET: `INSERT INTO alloted_asset
-    ( asset_id, user_id, picture_1, picture_2)
-    VALUES(?, ?, ?, ?);`,
+    ( asset_id, user_id, picture_1, picture_2,project_title, project_description,allotment_date)
+    VALUES(?, ?, ?, ?, ?, ?,?);`,
 
     GET_ALLOTED_ASSET_BY_ASSET_ID: `SELECT asset_id FROM alloted_asset where asset_id=?;`,
 
@@ -430,5 +428,11 @@ module.exports = {
 	asset.asset_id = alloted_asset.asset_id
     inner join asset_files on
 	asset.asset_id = asset_files.asset_id ; ;
+	`,
+
+    CREATE_EMPLOYEE_CONTRACT: `
+    UPDATE ems.employee
+    SET reporting_manager_from_users=?, contract_start_date=?, contract_end_date=?, pay=?, signed_contract_pdf=?
+    WHERE employee_id=0;
 	`,
 }

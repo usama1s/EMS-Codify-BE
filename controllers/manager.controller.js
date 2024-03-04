@@ -51,8 +51,8 @@ module.exports = {
         }
     },
 
-     // GET ALL ASSETS
-     async getAllAsset(req,res) {
+    // GET ALL ASSETS
+    async getAllAsset(req, res) {
         try {
             const assets = await managerService.getAllAsset();
             return res.status(200).json(assets);
@@ -62,8 +62,8 @@ module.exports = {
         }
     },
 
-     // GET ALL USERS
-     async getUsers(req, res) {
+    // GET ALL USERS
+    async getUsers(req, res) {
         try {
             const users = await managerService.getUsers();
             return res.status(200).json(users);
@@ -86,7 +86,7 @@ module.exports = {
     },
 
     // GET ALL ASSETS WHICH ARE NOT ALLOTED
-    async getAllAssetNotAlloted(req,res) {
+    async getAllAssetNotAlloted(req, res) {
         try {
             const assets = await managerService.getAllAssetNotAlloted();
             return res.status(200).json(assets);
@@ -96,8 +96,8 @@ module.exports = {
         }
     },
 
-     // GET ALL ALLOTED ASSETS
-     async getAllAllottedAsset(req,res) {
+    // GET ALL ALLOTED ASSETS
+    async getAllAllottedAsset(req, res) {
         try {
             const assets = await managerService.getAllAllottedAsset();
             return res.status(200).json(assets);
@@ -106,4 +106,28 @@ module.exports = {
             return res.status(401).json({ error: "Failed " });
         }
     },
+
+    // GET ALL MANAGERS
+    async getAllManagers(req, res) {
+        try {
+            const attendance = await managerService.getAllManagers();
+            return res.status(200).json(attendance);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed add attencdence" });
+        }
+    },
+
+    // CREATE EMPLOYEE CONTRACT
+    async createContact(req, res) {
+        try {
+            const contractDetail = req.body
+            const contract = await managerService.createContact(contractDetail);
+            return res.status(200).json(attendance);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed add attencdence" });
+        }
+    },
+
 }
