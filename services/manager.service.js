@@ -270,27 +270,31 @@ module.exports = {
         try {
             const [assets] = await pool.query(sql.GET_ALL_ASSETS);
             const picturesArrayBase64 = [];
+            for (const asset of assets) {
 
-            assets.forEach(row => {
+                // const [isAssetAlloted] = await pool.query(sql.GET_ALLOTED_ASSET_BY_ASSET_ID, [asset.asset_id]);
+
+                // if (isAssetAlloted.length == 0) {
+
                 const assetObject = {
-                    assetId: row.asset_id,
-                    title: row.asset_title,
-                    description: row.asset_description,
-                    company: row.asset_company,
+                    assetId: asset.asset_id,
+                    title: asset.asset_title,
+                    description: asset.asset_description,
+                    company: asset.asset_company,
                     pictures: []
                 };
 
                 const pictures = [
-                    row.picture_1,
-                    row.picture_2,
-                    row.picture_3,
-                    row.picture_4,
-                    row.picture_5,
-                    row.picture_6,
-                    row.picture_7
+                    asset.picture_1,
+                    asset.picture_2,
+                    asset.picture_3,
+                    asset.picture_4,
+                    asset.picture_5,
+                    asset.picture_6,
+                    asset.picture_7
                 ];
 
-                pictures.forEach(picture => {
+                for (const picture of pictures) {
                     if (picture !== null) {
                         const pictureUrl = picture;
                         const pictureFilepath = utils.extractFilenameFromURL(pictureUrl);
@@ -299,10 +303,12 @@ module.exports = {
                     } else {
                         assetObject.pictures.push(null);
                     }
-                });
+
+                };
 
                 picturesArrayBase64.push(assetObject);
-            });
+                // }
+            };
 
             return picturesArrayBase64;
         } catch (error) {
@@ -323,7 +329,7 @@ module.exports = {
         }
     },
 
-    // GET ALL USERS
+    // ALLOTMENT OF ASSETS
     async allotAsset(allotmentData) {
         try {
             const { assetId, pictures, userId } = allotmentData
@@ -343,5 +349,102 @@ module.exports = {
         }
     },
 
+    // GET ALL ASSETS WHICH ARE NOT ALLOTED
+    async getAllAssetNotAlloted() {
+        try {
+            const [assets] = await pool.query(sql.GET_ALL_ASSETS);
+            const picturesArrayBase64 = [];
+            for (const asset of assets) {
 
+                const [isAssetAlloted] = await pool.query(sql.GET_ALLOTED_ASSET_BY_ASSET_ID, [asset.asset_id]);
+
+                if (isAssetAlloted.length == 0) {
+
+                    const assetObject = {
+                        assetId: asset.asset_id,
+                        title: asset.asset_title,
+                        description: asset.asset_description,
+                        company: asset.asset_company,
+                        pictures: []
+                    };
+
+                    const pictures = [
+                        asset.picture_1,
+                        asset.picture_2,
+                        asset.picture_3,
+                        asset.picture_4,
+                        asset.picture_5,
+                        asset.picture_6,
+                        asset.picture_7
+                    ];
+
+                    for (const picture of pictures) {
+                        if (picture !== null) {
+                            const pictureUrl = picture;
+                            const pictureFilepath = utils.extractFilenameFromURL(pictureUrl);
+                            const pictureBase64 = utils.convertFileIntoBase64(pictureFilepath);
+                            assetObject.pictures.push(pictureBase64);
+                        } else {
+                            assetObject.pictures.push(null);
+                        }
+
+                    };
+
+                    picturesArrayBase64.push(assetObject);
+                }
+            };
+
+            return picturesArrayBase64;
+        } catch (error) {
+            console.error("Error retrieving assets:", error);
+            throw error;
+        }
+    },
+
+    // GET ALL ALLOTED ASSETS
+    async getAllAllottedAsset() {
+        try {
+            const [assets] = await pool.query(sql.GET_ALL_ALLOTED_ASSET);
+            const picturesArrayBase64 = [];
+            for (const asset of assets) {
+                const assetObject = {
+                    firstName:asset.first_name,
+                    lastName:asset.last_name,
+                    assetId: asset.asset_id,
+                    title: asset.asset_title,
+                    description: asset.asset_description,
+                    company: asset.asset_company,
+                    pictures: []
+                };
+
+                const pictures = [
+                    asset.picture_1,
+                    asset.picture_2,
+                    asset.picture_3,
+                    asset.picture_4,
+                    asset.picture_5,
+                    asset.picture_6,
+                    asset.picture_7
+                ];
+
+                for (const picture of pictures) {
+                    if (picture !== null) {
+                        const pictureUrl = picture;
+                        const pictureFilepath = utils.extractFilenameFromURL(pictureUrl);
+                        const pictureBase64 = utils.convertFileIntoBase64(pictureFilepath);
+                        assetObject.pictures.push(pictureBase64);
+                    } else {
+                        assetObject.pictures.push(null);
+                    }
+
+                };
+                picturesArrayBase64.push(assetObject);
+            };
+
+            return picturesArrayBase64;
+        } catch (error) {
+            console.error("Error retrieving assets:", error);
+            throw error;
+        }
+    },
 }

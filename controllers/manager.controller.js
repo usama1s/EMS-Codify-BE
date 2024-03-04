@@ -73,11 +73,33 @@ module.exports = {
         }
     },
 
-    // ADD ASSETS
+    // ALLOTMENT OF ASSETS
     async allotAsset(req, res) {
         try {
             const allotmentData = req.body
             const assets = await managerService.allotAsset(allotmentData);
+            return res.status(200).json(assets);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+    // GET ALL ASSETS WHICH ARE NOT ALLOTED
+    async getAllAssetNotAlloted(req,res) {
+        try {
+            const assets = await managerService.getAllAssetNotAlloted();
+            return res.status(200).json(assets);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed " });
+        }
+    },
+
+     // GET ALL ALLOTED ASSETS
+     async getAllAllottedAsset(req,res) {
+        try {
+            const assets = await managerService.getAllAllottedAsset();
             return res.status(200).json(assets);
         } catch (error) {
             console.error("Error creating user:", error);

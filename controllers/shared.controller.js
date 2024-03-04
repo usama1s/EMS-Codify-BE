@@ -59,7 +59,7 @@ module.exports = {
         }
     },
 
-    // ADD DAILY PROGRESS OF EMPLOYEES
+    // CHECK DAILY PROGRESS OF EMPLOYEES
     async checkProgress(req, res) {
         try {
             const { userId, date, startTime, endTime } = req.query;

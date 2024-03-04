@@ -11,5 +11,7 @@ router.get('/get-all-users', managerController.getUsers);
 router.get('/get-all-employees', managerController.getAllEmployee);
 router.get('/get-all-employees-attendance/:year/:month', managerController.getAllEmployeesAttendance);
 router.get('/get-all-assets', managerController.getAllAsset);
+router.get('/get-all-assets-not-alloted', managerController.getAllAssetNotAlloted);
+router.get('/get-all-alloted-assets', managerController.getAllAllottedAsset);
 
 module.exports = router;

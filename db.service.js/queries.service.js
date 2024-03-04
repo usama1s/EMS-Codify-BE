@@ -416,4 +416,19 @@ module.exports = {
     INSERT_INTO_ALLOT_ASSET: `INSERT INTO alloted_asset
     ( asset_id, user_id, picture_1, picture_2)
     VALUES(?, ?, ?, ?);`,
+
+    GET_ALLOTED_ASSET_BY_ASSET_ID: `SELECT asset_id FROM alloted_asset where asset_id=?;`,
+
+    GET_ALL_ALLOTED_ASSET: `
+    select
+	*
+    from
+	alloted_asset
+    left join users on
+	users.user_id = alloted_asset.user_id
+    inner join asset on
+	asset.asset_id = alloted_asset.asset_id
+    inner join asset_files on
+	asset.asset_id = asset_files.asset_id ; ;
+	`,
 }
