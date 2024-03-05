@@ -9,16 +9,15 @@ module.exports = {
 
     // BASE 64 TO PDF
     async base64ToPdf(file) {
-        // const splitPdf = base64File.split(',')
-        // const buffer = Buffer.from(splitPdf[1], 'base64');
-        const base64File = file;
+        const splitPdf = file.split(",");
+        const base64File = splitPdf[1];
         const buffer = Buffer.from(base64File, 'base64');
         const defaultExtension = 'pdf';
 
         const fileName = `pdf_file${Date.now()}.${defaultExtension}`;
         const filePath = path.join(__dirname, '../uploads', fileName);
 
-        await fs.writeFile(filePath, buffer);
+        await fsPromise.writeFile(filePath, buffer);
         return filePath;
     },
 
@@ -121,6 +120,9 @@ module.exports = {
             text = 'Your leave request has been rejected.'
         } else if (status === 2) {
             text = 'Your leave request has been Approved.'
+        }
+        else if (status === 'contract') {
+            text = 'Your contract is active.'
         }
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,

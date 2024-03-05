@@ -1,7 +1,8 @@
 user_type [
     1 = super admin
     2 = manager
-    3 = normal employee
+    3 = employee
+    23= manager and employee
 ]
 
 manager roles [
@@ -15,7 +16,7 @@ manager roles [
 contract status[
     1: active
     2: terminated
-    3: finished
+    3: expired
 ]
 
 leave status[

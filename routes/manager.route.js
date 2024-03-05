@@ -9,6 +9,8 @@ router.post('/add-asset-data', managerController.addAsset);
 router.post('/allot-asset', managerController.allotAsset);
 router.get('/get-all-users', managerController.getUsers);
 router.get('/get-all-employees', managerController.getAllEmployee);
+router.get('/get-all-employees-without-active-contract', managerController.getAllEmployeeWithoutActiveContract);
+router.get('/get-all-contract-by-userid', managerController.getAllUserContracts);
 router.get('/get-all-employees-attendance/:year/:month', managerController.getAllEmployeesAttendance);
 router.get('/get-all-assets', managerController.getAllAsset);
 router.get('/get-all-assets-not-alloted', managerController.getAllAssetNotAlloted);

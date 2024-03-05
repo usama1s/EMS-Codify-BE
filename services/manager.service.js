@@ -82,8 +82,7 @@ module.exports = {
     // GET ALL EMPLOYEE
     async getAllEmployee() {
         try {
-            const managerMap = new Map();
-            const [employees] = await pool.query(sql.GET_ALL_EMPLOYEE, [3]);
+            const [employees] = await pool.query(sql.GET_ALL_EMPLOYEE);
             return employees;
 
         } catch (error) {
@@ -480,16 +479,77 @@ module.exports = {
         }
     },
 
+    // GET ALL EMPLOYEE WITHOUT ACTIVE CONTRACT
+    async getAllUsersWithoutActiveContract() {
+        try {
+            const [users] = await pool.query(sql.GET_ALL_USER_FOR_CONTRACT);
+            let usersWithoutContract = []
+            for (const user of users) {
+                const [isActive] = await pool.query(sql.GET_USER_WITH_CONTRACTS, [user.user_id]);
+                if (isActive.length == 0) {
+                    usersWithoutContract.push(user)
+                }
+            }
+            return usersWithoutContract;
+
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
+
     // REGISTER NORMAL EMPLOYEES 
     async createContact(contractDetail) {
         try {
-            const { employeeId, managerId, startDate, endDate, pay, pdf} = contractDetail;
-
-            const [contract] = await pool.query(sql.INSERT_INTO_EMPLOYEE_CONTRACT, [employeeId, managerId, startDate, endDate, pay, pdf]);
+            const { employeeId, managerId, startDate, endDate, pay, pdf } = contractDetail;
+            let fileName;
+            if (pdf) {
+                fileName = await utils.base64ToPdf(pdf);
+            } else {
+                fileName = null
+            }
+            const [contract] = await pool.query(sql.INSERT_INTO_EMPLOYEE_CONTRACT, [employeeId, managerId, startDate, endDate, pay, fileName]);
+            if (contract.affectedRows == 1) {
+                const [emailResult] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [employeeId]);
+                const email = emailResult[0].email;
+                let status = "contract"
+                let sendEmail = utils.sendEmail(email, status);
+                if (sendEmail) {
+                    return { message: "Email sent" };
+                }
+            }
         }
 
         catch (error) {
             console.error("Error creating user:", error);
+            throw error;
+        }
+    },
+
+    // GET ALL CONTRACTS OF SPECIFIC USER
+    async getAllUserContracts(userId) {
+        try {
+            let allContracts = []
+            const [contracts] = await pool.query(sql.GET_USER_CONTRACTS_BY_USER_ID, [userId]);
+            for (const contract of contracts) {
+                const [managerData] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [contract.reporting_manager_from_users]);
+                const pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf)
+                const pdfBase64 = utils.convertFileIntoBase64(pdfFileName)
+                let fullContratDetail = {
+                    contractId: contract.employee_contract_id,
+                    userId: contract.user_id,
+                    reportingManager: managerData[0].first_name + managerData[0].last_name,
+                    contractStartDate: contract.contract_start_date,
+                    contractEndDate: contract.contract_end_date,
+                    pay: contract.pay,
+                    pdf: pdfBase64,
+                    contractStatus: contract.contract_status
+                }
+                allContracts.push(fullContratDetail);
+            }
+            return allContracts;
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
             throw error;
         }
     },

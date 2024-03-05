@@ -118,15 +118,39 @@ module.exports = {
         }
     },
 
+    // GET ALL EMPLOYEE WITHOUT ACTIVE CONTRACT
+    async getAllEmployeeWithoutActiveContract(req, res) {
+        try {
+            const usersWithoutContract = await managerService.getAllUsersWithoutActiveContract();
+            return res.status(200).json(usersWithoutContract);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: error });
+        }
+    },
+
+
     // CREATE EMPLOYEE CONTRACT
     async createContact(req, res) {
         try {
             const contractDetail = req.body
             const contract = await managerService.createContact(contractDetail);
-            return res.status(200).json(attendance);
+            return res.status(200).json(contract);
         } catch (error) {
             console.error("Error creating user:", error);
             return res.status(401).json({ error: "Failed add attencdence" });
+        }
+    },
+
+    // GET ALL CONTRACTS OF SPECIFIC USER
+    async getAllUserContracts(req, res) {
+        try {
+            const { userId } = req.query
+            const contracts = await managerService.getAllUserContracts(userId);
+            return res.status(200).json(contracts);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: error });
         }
     },
 

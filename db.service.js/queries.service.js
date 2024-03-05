@@ -229,7 +229,7 @@ module.exports = {
     from
 	users
     where
-	user_type =?;
+	user_type =3 or user_type =23 ;
     `,
 
     GET_ALL_USERS: `
@@ -257,13 +257,13 @@ module.exports = {
     limit 1;
     `,
 
-    GET_EMPLOYEE_ID: `
-    select
-    employee_id 
-    from 
-    employee
-    where user_id=?
-    `,
+    // GET_: `
+    // select
+    // employee_id 
+    // from 
+    // employee
+    // where user_id=?
+    // `,
 
     INSERT_INTO_EMPLOYEE_PROGRESS: `INSERT INTO employee_progress
     (employee_id, progress_date)
@@ -435,4 +435,40 @@ module.exports = {
     SET reporting_manager_from_users=?, contract_start_date=?, contract_end_date=?, pay=?, signed_contract_pdf=?
     WHERE employee_id=0;
 	`,
+
+    GET_USER_DATA_BY_USER_ID: `
+    SELECT *
+    FROM users
+    WHERE user_id=?`,
+
+    GET_ALL_USER_FOR_CONTRACT: `
+    select
+    *
+    from
+    users
+    where
+    user_type =2 or user_type =3;
+    `,
+
+    GET_USER_WITH_CONTRACTS: `
+    SELECT *
+    FROM employee_contract 
+    where user_id=? and contract_status=1 ;`,
+
+    GET_USER_CONTRACTS_BY_USER_ID: `
+    SELECT 
+    employee_contract_id, 
+    user_id, 
+    reporting_manager_from_users, 
+    DATE_FORMAT(contract_start_date, '%Y-%m-%d') AS contract_start_date, 
+    DATE_FORMAT(contract_end_date, '%Y-%m-%d') AS contract_end_date, 
+    pay, 
+    signed_contract_pdf, 
+    contract_status 
+    FROM 
+    employee_contract 
+    WHERE 
+    user_id = ?;
+`,
+
 }
