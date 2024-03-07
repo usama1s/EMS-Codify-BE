@@ -15,7 +15,7 @@ module.exports = {
             ]);
             if (!isUserRegistered.length) {
                 const [registerUser] = await pool.query(sql.INSERT_INTO_USERS, [first_name, last_name, email, password, user_type, designation, date_of_joining]);
-                if (user_type === 2) {
+                if (user_type === 2||user_type === 23) {
                     const userId = registerUser.insertId
                     for (const role of roles) {
                         await pool.query(sql.INSERT_INTO_MANAGER, [userId, role]);

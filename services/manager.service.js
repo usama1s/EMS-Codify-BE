@@ -553,4 +553,20 @@ module.exports = {
             throw error;
         }
     },
+
+    // CHANGE CONTRACT STATUS
+    async changeContactStatus(contractId, status ) {
+        try {
+            const [contract] = await pool.query(sql.CHANGE_CONTRACT_STATUS, [status, contractId]);
+            if (contract.affectedRows == 1) {
+                return { message: "Contract status changed" }
+            }
+        }
+
+        catch (error) {
+            console.error("Error creating user:", error);
+            throw error;
+        }
+    },
+
 }

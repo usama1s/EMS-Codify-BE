@@ -10,7 +10,7 @@ module.exports = {
     async getAllManagers() {
         try {
             const managerMap = new Map();
-            const [managers] = await pool.query(sql.GET_ALL_MANAGERS, [2]);
+            const [managers] = await pool.query(sql.GET_ALL_MANAGERS);
 
             managers.forEach(manager => {
                 const existingManager = managerMap.get(manager.user_id);
@@ -27,7 +27,7 @@ module.exports = {
                         "user_type": manager.user_type,
                         "roles": [manager.role],
                         "designation": manager.designation,
-                        "date_of_joining": ""
+                        "date_of_joining": manager.date_of_joining
                     });
                 }
             });

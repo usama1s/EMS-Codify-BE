@@ -154,4 +154,15 @@ module.exports = {
         }
     },
 
+    // CHANGE CONTRACT STATUS
+    async changeContactStatus(req, res) {
+        try {
+            const { contractId, status } = req.body
+            const contract = await managerService.changeContactStatus(contractId, status );
+            return res.status(200).json(contract);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed add attencdence" });
+        }
+    },
 }

@@ -32,8 +32,8 @@ module.exports = {
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
-    CREATE_TABLE_EMPLOYEE: `CREATE TABLE IF NOT EXISTS employee (
-        employee_id INT AUTO_INCREMENT PRIMARY KEY,
+    CREATE_TABLE_EMPLOYEE_CONTRACT: `CREATE TABLE IF NOT EXISTS employee_contract (
+        employee_contract_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         reporting_manager_from_users INT,
         contract_start_date Date,
@@ -156,7 +156,7 @@ module.exports = {
     FROM attendance
     INNER JOIN users ON attendance.user_id = users.user_id
     WHERE 
-    users.user_type = 2
+    users.user_type = 2 or users.user_type = 23
     AND (
         (? IS NULL OR YEAR(attendance.attendance_date_time) = ?) 
         AND 
@@ -183,8 +183,6 @@ module.exports = {
     inner join
     users on
 	attendance.user_id = users.user_id
-    inner join employee on
-	employee.user_id = users.user_id
     inner join employee_progress_detail on
 	employee_progress_detail.attendance_id = attendance.attendance_id
     where
@@ -214,13 +212,20 @@ module.exports = {
 
     GET_ALL_MANAGERS: `
     select
-	*
+	users.user_id,
+	users.first_name,
+	users.last_name,
+	users.email,
+	users.user_type,
+    manager.role,
+	users.designation,
+    DATE_FORMAT(users.date_of_joining, '%Y-%m-%d') AS date_of_joining
     from
 	users
     inner join manager on
 	manager.user_id = users.user_id
     where
-	users.user_type =?;
+	users.user_type =2 or users.user_type =23;
     `,
 
     GET_ALL_EMPLOYEE: `
@@ -256,14 +261,6 @@ module.exports = {
 	attendance_date_time desc
     limit 1;
     `,
-
-    // GET_: `
-    // select
-    // employee_id 
-    // from 
-    // employee
-    // where user_id=?
-    // `,
 
     INSERT_INTO_EMPLOYEE_PROGRESS: `INSERT INTO employee_progress
     (employee_id, progress_date)
@@ -470,5 +467,10 @@ module.exports = {
     WHERE 
     user_id = ?;
 `,
+
+    CHANGE_CONTRACT_STATUS: `
+    UPDATE employee_contract
+    SET contract_status=?
+    WHERE employee_contract_id=?;`,
 
 }
