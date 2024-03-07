@@ -21,6 +21,7 @@ router.get('/get-all-assets', managerController.getAllAsset);
 router.get('/get-all-assets-not-alloted', managerController.getAllAssetNotAlloted);
 router.get('/get-all-alloted-assets', managerController.getAllAllottedAsset);
 router.get('/get-all-managers', managerController.getAllManagers);
+router.get('/get-all-active-contracts', managerController.getAllActiveContracts);
 
 //PUT
 router.put('/change-contract-status', managerController.changeContactStatus);

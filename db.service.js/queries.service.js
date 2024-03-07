@@ -96,6 +96,17 @@ module.exports = {
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
+    CREATE_TABLE_SALARY_PAYMENTS: `CREATE TABLE IF NOT EXISTS salary_payment (
+        salary_payment_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        month VARCHAR(25)  
+        amount INT  
+        bonus INT  
+        tax float  
+        total_paid VARCHAR(255)  
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    );`,
+
     INSERT_INTO_USERS: `INSERT INTO users
     (first_name, last_name, email, password, user_type, designation, date_of_joining)
      VALUES (?,?,?,?,?,?,?)`,
@@ -472,5 +483,21 @@ module.exports = {
     UPDATE employee_contract
     SET contract_status=?
     WHERE employee_contract_id=?;`,
+
+    GET_ALL_ACTIVE_CONTRACTS: `
+    SELECT 
+    employee_contract_id, 
+    user_id, 
+    reporting_manager_from_users, 
+    DATE_FORMAT(contract_start_date, '%Y-%m-%d') AS contract_start_date, 
+    DATE_FORMAT(contract_end_date, '%Y-%m-%d') AS contract_end_date, 
+    pay, 
+    signed_contract_pdf, 
+    contract_status 
+    FROM 
+    employee_contract 
+    WHERE 
+    contract_status= 1;
+`,
 
 }

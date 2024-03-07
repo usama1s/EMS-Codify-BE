@@ -555,7 +555,7 @@ module.exports = {
     },
 
     // CHANGE CONTRACT STATUS
-    async changeContactStatus(contractId, status ) {
+    async changeContactStatus(contractId, status) {
         try {
             const [contract] = await pool.query(sql.CHANGE_CONTRACT_STATUS, [status, contractId]);
             if (contract.affectedRows == 1) {
@@ -569,4 +569,31 @@ module.exports = {
         }
     },
 
+    // GET ALL ACTIVE CONTRACTS
+    async getAllActiveContracts() {
+        try {
+            let allActiveContracts = []
+            const [contracts] = await pool.query(sql.GET_ALL_ACTIVE_CONTRACTS);
+            for (const contract of contracts) {
+                const [managerData] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [contract.reporting_manager_from_users]);
+                const pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf)
+                const pdfBase64 = utils.convertFileIntoBase64(pdfFileName)
+                let fullContratDetail = {
+                    contractId: contract.employee_contract_id,
+                    userId: contract.user_id,
+                    reportingManager: managerData[0].first_name + managerData[0].last_name,
+                    contractStartDate: contract.contract_start_date,
+                    contractEndDate: contract.contract_end_date,
+                    pay: contract.pay,
+                    pdf: pdfBase64,
+                    contractStatus: contract.contract_status
+                }
+                allActiveContracts.push(fullContratDetail);
+            }
+            return allActiveContracts;
+        } catch (error) {
+            console.error("Error fetching manager attendance:", error);
+            throw error;
+        }
+    },
 }

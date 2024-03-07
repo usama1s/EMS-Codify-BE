@@ -165,4 +165,16 @@ module.exports = {
             return res.status(401).json({ error: "Failed add attencdence" });
         }
     },
+
+    // GET ALL ACTIVE CONTRACTS
+    async getAllActiveContracts(req, res) {
+        try {
+            const contracts = await managerService.getAllActiveContracts();
+            return res.status(200).json(contracts);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: error });
+        }
+    },
+
 }
