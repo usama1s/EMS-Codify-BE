@@ -576,13 +576,17 @@ module.exports = {
             let taxAmount;
             let monthYear = await utils.getCurrentMonthYear();
             let SalaryAfterTax;
+            let pdfBase64;
+            let pdfFileName;
             const [contracts] = await pool.query(sql.GET_ALL_ACTIVE_CONTRACTS);
             for (const contract of contracts) {
                 const [isPaid] = await pool.query(sql.GET_ALL_SALARY_PAID, [contract.user_id, monthYear.monthName, monthYear.year]);
                 if (isPaid.length == 0) {
                     const [contractData] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [contract.user_id]);
-                    const pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf);
-                    const pdfBase64 = utils.convertFileIntoBase64(pdfFileName);
+                    if (pdfFileName) {
+                        pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf);
+                        pdfBase64 = utils.convertFileIntoBase64(pdfFileName);
+                    }
                     taxAmount = await utils.calculateMonthlyTax(contract.pay);
                     SalaryAfterTax = contract.pay - taxAmount;
                     let fullContratDetail = {
