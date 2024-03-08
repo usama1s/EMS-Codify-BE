@@ -5,6 +5,20 @@ const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 dotenv.config();
 
+
+const taxSlabs = [
+    { minSalary: 0, maxSalary: 50000, taxRate: 0 },
+    { minSalary: 50001, maxSalary: 75000, taxRate: 0.05 },
+    { minSalary: 75001, maxSalary: 100000, taxRate: 0.1 },
+    { minSalary: 100001, maxSalary: 150000, taxRate: 0.15 },
+    { minSalary: 150001, maxSalary: 250000, taxRate: 0.175 },
+    { minSalary: 250001, maxSalary: 350000, taxRate: 0.2 },
+    { minSalary: 350001, maxSalary: Infinity, taxRate: 0.225 }
+];
+
+
+
+
 module.exports = {
 
     // BASE 64 TO PDF
@@ -123,6 +137,8 @@ module.exports = {
         }
         else if (status === 'contract') {
             text = 'Your contract is active.'
+        } else if (status === 'salary') {
+            text = 'Your salary has been credited.'
         }
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
@@ -150,6 +166,59 @@ module.exports = {
             }
         });
     },
+
+    calculateMonthlyTax: async (monthlySalary) => {
+        // Calculate annual salary
+        // const annualSalary = monthlySalary * 12;
+
+        // Calculate tax for annual salary
+        let tax = 0;
+        let monthlyTax;
+
+        for (const slab of taxSlabs) {
+            if (monthlySalary > slab.maxSalary) {
+                tax += (slab.maxSalary - slab.minSalary + 1) * slab.taxRate;
+            } else if (monthlySalary >= slab.minSalary && monthlySalary <= slab.maxSalary) {
+                tax += (monthlySalary - slab.minSalary + 1) * slab.taxRate;
+                break;
+            }
+        }
+        // monthlyTax = tax / 12;
+        // Return monthly tax amount
+        return tax
+    },
+
+    getCurrentMonthYear: async () => {
+        const currentDate = new Date();
+
+        // Array of month names
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
+
+        // Extracting the current day, month, and year
+        const currentDay = currentDate.getDate();
+        const Day = 28
+        const currentMonthNumber = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        let monthNumber = currentMonthNumber;
+        let year = currentYear;
+
+        // Increment month if current day is 28
+        // if (Day === 28) {
+        if (currentDay === 28) {
+            monthNumber = (currentMonthNumber + 1) % 12; // Increment month (roll over if December)
+            if (monthNumber === 0) {
+                year++; // Increment year if it rolls over to January of the following year
+            }
+        }
+
+        const monthName = monthNames[monthNumber];
+
+        return { monthName, year }; // Returning as an object
+    }
 
 
 }

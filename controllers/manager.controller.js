@@ -167,14 +167,27 @@ module.exports = {
     },
 
     // GET ALL ACTIVE CONTRACTS
-    async getAllActiveContracts(req, res) {
+    async getAllActiveContractsWithPay(req, res) {
         try {
-            const contracts = await managerService.getAllActiveContracts();
+            const contracts = await managerService.getAllActiveContractsWithPay();
             return res.status(200).json(contracts);
         } catch (error) {
             console.error("Error creating user:", error);
             return res.status(401).json({ error: error });
         }
     },
+
+    // PAY EMPLOYEE SALARY
+    async paySalary(req, res) {
+        try {
+            const salaryDetail = req.body
+            const salary = await managerService.paySalary(salaryDetail);
+            return res.status(200).json(salary);
+        } catch (error) {
+            console.error("Error creating user:", error);
+            return res.status(401).json({ error: "Failed add attencdence" });
+        }
+    },
+
 
 }

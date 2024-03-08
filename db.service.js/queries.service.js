@@ -99,11 +99,11 @@ module.exports = {
     CREATE_TABLE_SALARY_PAYMENTS: `CREATE TABLE IF NOT EXISTS salary_payment (
         salary_payment_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
-        month VARCHAR(25)  
-        amount INT  
-        bonus INT  
-        tax float  
-        total_paid VARCHAR(255)  
+        month VARCHAR(25),  
+        amount INT,
+        bonus INT, 
+        tax float, 
+        total_paid VARCHAR(255),
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     );`,
 
@@ -498,6 +498,19 @@ module.exports = {
     employee_contract 
     WHERE 
     contract_status= 1;
-`,
+    `,
+
+    INSERT_INTO_SALARY_PAYMENT: `
+    INSERT INTO salary_payment
+    (user_id, month, amount, bonus, tax, total_paid,salary_attactment,year)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?);
+    `,
+
+    GET_ALL_SALARY_PAID: `
+    SELECT salary_payment_id, user_id, month, amount, bonus, tax, total_paid, salary_attactment,year
+    FROM salary_payment
+    where user_id=? and month=? and year=?;
+    `,
+
 
 }

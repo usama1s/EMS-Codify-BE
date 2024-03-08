@@ -27,7 +27,8 @@ async function createDatabase() {
             sql.CREATE_TABLE_LEAVE,
             sql.CREATE_TABLE_ASSETS,
             sql.CREATE_TABLE_ASSETS_FILES,
-            sql.CREATE_TABLE_ALLOTED_ASSET
+            sql.CREATE_TABLE_ALLOTED_ASSET,
+            sql.CREATE_TABLE_SALARY_PAYMENTS
         ];
 
         // Iterate over the array and create each table
