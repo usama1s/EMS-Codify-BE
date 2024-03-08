@@ -498,7 +498,7 @@ module.exports = {
         }
     },
 
-    // REGISTER NORMAL EMPLOYEES 
+    // CREATE EMPLOYEES CONTRACT
     async createContact(contractDetail) {
         try {
             const { employeeId, managerId, startDate, endDate, pay, pdf } = contractDetail;
@@ -570,25 +570,36 @@ module.exports = {
     },
 
     // GET ALL ACTIVE CONTRACTS
-    async getAllActiveContracts() {
+    async getAllActiveContractsWithPay() {
         try {
             let allActiveContracts = []
+            let taxAmount;
+            let monthYear = await utils.getCurrentMonthYear();
+            let SalaryAfterTax;
             const [contracts] = await pool.query(sql.GET_ALL_ACTIVE_CONTRACTS);
             for (const contract of contracts) {
-                const [managerData] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [contract.reporting_manager_from_users]);
-                const pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf)
-                const pdfBase64 = utils.convertFileIntoBase64(pdfFileName)
-                let fullContratDetail = {
-                    contractId: contract.employee_contract_id,
-                    userId: contract.user_id,
-                    reportingManager: managerData[0].first_name + managerData[0].last_name,
-                    contractStartDate: contract.contract_start_date,
-                    contractEndDate: contract.contract_end_date,
-                    pay: contract.pay,
-                    pdf: pdfBase64,
-                    contractStatus: contract.contract_status
+                const [isPaid] = await pool.query(sql.GET_ALL_SALARY_PAID, [contract.user_id, monthYear.monthName, monthYear.year]);
+                if (isPaid.length == 0) {
+                    const [contractData] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [contract.user_id]);
+                    const pdfFileName = utils.extractFilenameFromURL(contract.signed_contract_pdf);
+                    const pdfBase64 = utils.convertFileIntoBase64(pdfFileName);
+                    taxAmount = await utils.calculateMonthlyTax(contract.pay);
+                    SalaryAfterTax = contract.pay - taxAmount;
+                    let fullContratDetail = {
+                        contractId: contract.employee_contract_id,
+                        userId: contract.user_id,
+                        fullName: contractData[0].first_name + contractData[0].last_name,
+                        contractStartDate: contract.contract_start_date,
+                        contractEndDate: contract.contract_end_date,
+                        pay: contract.pay,
+                        tax: taxAmount,
+                        month: monthYear.monthName,
+                        year: monthYear.year,
+                        pdf: pdfBase64,
+                        contractStatus: contract.contract_status
+                    }
+                    allActiveContracts.push(fullContratDetail);
                 }
-                allActiveContracts.push(fullContratDetail);
             }
             return allActiveContracts;
         } catch (error) {
@@ -596,4 +607,33 @@ module.exports = {
             throw error;
         }
     },
+
+    // PAY EMPLOYEE SALARY
+    async paySalary(salaryDetail) {
+        try {
+            const { amount, month, tax, totalPaid, bonus, userId, pdfBase64, year } = salaryDetail;
+            let fileName;
+            if (pdfBase64) {
+                fileName = await utils.base64ToPdf(pdfBase64);
+            } else {
+                fileName = null
+            }
+            const [salary] = await pool.query(sql.INSERT_INTO_SALARY_PAYMENT, [userId, month, amount, bonus, tax, totalPaid, fileName, year]);
+            if (salary.affectedRows == 1) {
+                const [emailResult] = await pool.query(sql.GET_USER_DATA_BY_USER_ID, [userId]);
+                const email = emailResult[0].email;
+                let status = "salary"
+                let sendEmail = utils.sendEmail(email, status);
+                if (sendEmail) {
+                    return { message: "Email sent" };
+                }
+            }
+        }
+
+        catch (error) {
+            console.error("Error creating user:", error);
+            throw error;
+        }
+    },
+
 }
